@@ -1,6 +1,6 @@
 namespace Library;
 
-public class Program
+public class Library
 {
     public void AddBook()
     {
@@ -21,15 +21,5 @@ public class Program
     public string ShowAllBooks()
     {
         return "List of Books";
-    }
-
-    public bool BorrowBook()
-    {
-        Console.WriteLine("Book Borrowed");
-    }
-    
-    public bool ReturnBook()
-    {
-        Console.WriteLine("Book Returned");
     }
 }
