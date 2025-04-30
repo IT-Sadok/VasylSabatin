@@ -22,14 +22,4 @@ public class Program
     {
         return "List of Books";
     }
-
-    public bool BorrowBook()
-    {
-        Console.WriteLine("Book Borrowed");
-    }
-    
-    public bool ReturnBook()
-    {
-        Console.WriteLine("Book Returned");
-    }
 }
