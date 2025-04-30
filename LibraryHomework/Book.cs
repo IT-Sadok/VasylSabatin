@@ -1,6 +1,6 @@
 namespace Library;
 
-public class Books : Program
+public class Book 
 {
     public string Title { get; set; }
     
