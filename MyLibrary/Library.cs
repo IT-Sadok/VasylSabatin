@@ -1,25 +1,32 @@
+using Library;
+using System.Collections.Generic;
+
 namespace MyLibrary;
 
 public class Library
 {
-    public void AddBook()
+    private List<Book> _books = []; 
+    
+    public List<Book> AddBook(Book book)
     {
-        Console.WriteLine("Book Added");
-
+        _books.Add(book);
+        return null;
     }
 
-    public void DeleteBook()
+    public List<Book> DeleteBook(Book book)
     {
-        Console.WriteLine("Book Deleted");
+        _books.Remove(book);
+        return null;
     }
 
-    public string SearchBook()
+    public List<Book> SearchBook(Book book)
     {
-        return "Book Found";
+        _books.Sort();
+        return null;
     }
 
-    public string ShowAllBooks()
+    public List<Book> ShowAll(Book book)
     {
-        return "List of Books";
+        return _books;
     }
 }
