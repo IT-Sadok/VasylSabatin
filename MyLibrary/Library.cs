@@ -7,25 +7,22 @@ public class Library
 {
     private List<Book> _books = []; 
     
-    public List<Book> AddBook(Book book)
+    public void AddBook(Book book)
     {
         _books.Add(book);
-        return null;
     }
 
-    public List<Book> DeleteBook(Book book)
+    public void DeleteBook(Book book)
     {
         _books.Remove(book);
-        return null;
     }
 
-    public List<Book> SearchBook(Book book)
+    public Book? SearchBook(int id)
     {
-        _books.Sort();
-        return null;
+        return _books.FirstOrDefault(book => book.Id == id);
     }
 
-    public List<Book> ShowAll(Book book)
+    public List<Book> GetAllBooks(Book book)
     {
         return _books;
     }
