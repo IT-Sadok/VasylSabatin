@@ -19,7 +19,7 @@ public class Library
 
     public Book? SearchBook(int id)
     {
-        return _books.FirstOrDefault(book => Book.Id == id);
+        return _books.FirstOrDefault(book => book.Id == id);
     }
 
     public List<Book> GetAllBooks(Book book)
