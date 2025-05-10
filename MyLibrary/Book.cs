@@ -1,4 +1,4 @@
-namespace Library;
+namespace MyLibrary;
 
 public class Book 
 {

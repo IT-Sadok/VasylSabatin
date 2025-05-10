@@ -1,14 +1,14 @@
-using Library;
+using MyLibrary;
 using System.Collections.Generic;
-
-namespace MyLibrary;
 
 public class Library
 {
-    private List<Book> _books = []; 
-    
+    private List<Book> _books = [];
+    Random _rand = new Random();
+     
     public void AddBook(Book book)
     {
+        book.Id = _rand.Next(1, 1000);
         _books.Add(book);
     }
 
@@ -26,4 +26,4 @@ public class Library
     {
         return _books;
     }
-}
+}    
