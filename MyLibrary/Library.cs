@@ -4,11 +4,12 @@ using System.Collections.Generic;
 public class Library
 {
     private List<Book> _books = [];
-    Random _rand = new Random();
+    public int nextId = 1;
      
     public void AddBook(Book book)
     {
-        book.Id = _rand.Next(1, 1000);
+        book.Id = nextId;
+        nextId++;
         _books.Add(book);
     }
 
@@ -17,9 +18,9 @@ public class Library
         _books.Remove(book);
     }
 
-    public Book? SearchBook(int id)
+    public Book? SearchBook(int id, string author)
     {
-        return _books.FirstOrDefault(book => book.Id == id);
+        return _books.FirstOrDefault(book => book.Id == id ||  book.Author == author);
     }
 
     public List<Book> GetAllBooks(Book book)
