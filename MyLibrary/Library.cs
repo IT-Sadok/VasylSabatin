@@ -4,12 +4,12 @@ using System.Collections.Generic;
 public class Library
 {
     private List<Book> _books = [];
-    public int nextId = 1;
+    private int _nextId = 1;
      
     public void AddBook(Book book)
     {
-        book.Id = nextId;
-        nextId++;
+        book.Id = _nextId;
+        _nextId++;
         _books.Add(book);
     }
 
