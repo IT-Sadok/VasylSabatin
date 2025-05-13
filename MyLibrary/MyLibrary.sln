@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{48F92797-FAF5-4FAC-BA15-24A2D88C27D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{FCA2CA43-27BD-4C4C-B337-FAB7D7CEBABD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VasylSabatin", "VasylSabatin", "{006999A1-654F-4BA1-8BB5-04DBAC6D25E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLibrary", "Documents\GitHub\VasylSabatin\MyLibrary\MyLibrary.csproj", "{8FEB9F05-867B-4062-BD13-AAAC9FE21474}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8FEB9F05-867B-4062-BD13-AAAC9FE21474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FEB9F05-867B-4062-BD13-AAAC9FE21474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FEB9F05-867B-4062-BD13-AAAC9FE21474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FEB9F05-867B-4062-BD13-AAAC9FE21474}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FCA2CA43-27BD-4C4C-B337-FAB7D7CEBABD} = {48F92797-FAF5-4FAC-BA15-24A2D88C27D2}
+		{006999A1-654F-4BA1-8BB5-04DBAC6D25E7} = {FCA2CA43-27BD-4C4C-B337-FAB7D7CEBABD}
+		{8FEB9F05-867B-4062-BD13-AAAC9FE21474} = {006999A1-654F-4BA1-8BB5-04DBAC6D25E7}
+	EndGlobalSection
+EndGlobal
