@@ -1,19 +1,17 @@
 namespace MyLibrary;
-using System.Text.Json;
 
 public class Library
 {
     private List<Book> _books = [];
     private int _nextId = 1;
-     
+    FileHandler fileHandler = new FileHandler();
+
     public void AddBook(Book book)
     {
         book.Id = _nextId;
         _nextId++;
         _books.Add(book);
-        
-        string json = JsonSerializer.Serialize(_books);
-        File.WriteAllText("books.json", json);
+        fileHandler.SavingFile(_books);
         Console.WriteLine("Book added");
     }
 
@@ -24,10 +22,11 @@ public class Library
 
     public Book? SearchBook(int id, string author)
     {
-        return _books.FirstOrDefault(book => book.Id == id ||  book.Author == author);
+        return _books.FirstOrDefault(book => book.Id == id || book.Author == author);
     }
 
-    public List<Book> GetAllBooks(Book book)
+    public List<Book> GetAllBooks()
     {
         return _books;
     }
+}    
