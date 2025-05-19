@@ -19,7 +19,3 @@ else
     Console.WriteLine("Invalid input, try again");
 
 library.AddBook(book);
-
-// Introducing the info about book 
-
-Console.WriteLine($"Your book: {book.Title}, {book.Author}, {book.Year.ToString()}, {book.Id.ToString()}");
