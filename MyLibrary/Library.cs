@@ -1,5 +1,5 @@
-using MyLibrary;
-using System.Collections.Generic;
+namespace MyLibrary;
+using System.Text.Json;
 
 public class Library
 {
@@ -11,6 +11,10 @@ public class Library
         book.Id = _nextId;
         _nextId++;
         _books.Add(book);
+        
+        string json = JsonSerializer.Serialize(_books);
+        File.WriteAllText("books.json", json);
+        Console.WriteLine("Book added");
     }
 
     public void DeleteBook(Book book)
@@ -27,4 +31,3 @@ public class Library
     {
         return _books;
     }
-}    
