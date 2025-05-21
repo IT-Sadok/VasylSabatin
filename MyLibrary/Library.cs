@@ -23,7 +23,6 @@ public class Library
         book.Id = _nextId++;
         _books.Add(book);
         fileHandler.SavingFile(_books);
-        Console.WriteLine("Book added");
     }
 
     public void DeleteBook(Book book)
