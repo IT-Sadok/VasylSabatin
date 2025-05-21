@@ -6,7 +6,6 @@ public class Library
     private int _nextId;
     FileHandler fileHandler = new FileHandler();
 
-
     public Library()
     {
         LoadBooks();
