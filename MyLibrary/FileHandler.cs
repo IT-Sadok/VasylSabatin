@@ -14,7 +14,7 @@ public class FileHandler
     {
         if (File.Exists(FileName))
         {
-            string json = File.ReadAllText(FileName);
+            var json = File.ReadAllText(FileName);
             return JsonSerializer.Deserialize<List<Book>>(json);
         }
         else

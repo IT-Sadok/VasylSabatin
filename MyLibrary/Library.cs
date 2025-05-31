@@ -2,7 +2,7 @@ namespace MyLibrary;
 
 public class Library
 {
-    private List<Book>? _books = [];
+    private List<Book>? _books = new List<Book>();
     private int _nextId;
     FileHandler fileHandler = new FileHandler();
 
@@ -19,8 +19,9 @@ public class Library
     
     public void AddBook(Book book)
     {
-        book.Id = _nextId++;
+        book.Id = _nextId;
         _books.Add(book);
+        _nextId++;
         fileHandler.SavingFile(_books);
     }
 

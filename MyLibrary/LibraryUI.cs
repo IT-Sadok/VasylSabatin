@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.Metadata.Ecma335;
 using MyLibrary;
 
 public class LibraryUI
@@ -8,37 +9,54 @@ public class LibraryUI
 
     public void DisplayMenu()
     {
-        Console.Clear();
-        Console.WriteLine("Welcome to my library!\n" +
-                          "1. Add book\n" +
-                          "2. Delete book\n" +
-                          "3. Search book\n" +
-                          "4. View all books");
-        Console.WriteLine("Select an option (1-4): ");
-
-        string option = Console.ReadLine();
-        switch (option)
+        while (true)
         {
-            case "1":
-                AddBook();
-                break;
-            case "2":
-                DeleteBook();
-                break;
-            case "3":
-                SearchBook();
-                break;
-            case "4":
-                ViewAllBooks();
-                break;
-            default:
-                Console.WriteLine("Invalid option. Please try again.");
+            Console.Clear();
+            Console.WriteLine("Welcome to my library!\n" +
+                              "1. Add book\n" +
+                              "2. Delete book\n" +
+                              "3. Search book\n" +
+                              "4. View all books");
+            Console.WriteLine("Select an option (1-4): ");
+        
+            var option = Console.ReadLine();
+        
+            if (option?.ToLower() == "quit")
+            {
+                Console.Clear();
+                Console.WriteLine("Goodbye");
                 break;
             }
+
+            switch (option)
+            {
+                case "1":
+                    AddBook();
+                    break;
+                case "2":
+                    DeleteBook();
+                    break;
+                case "3":
+                    SearchBook();
+                    break;
+                case "4":
+                    ViewAllBooks();
+                    break;
+                default:
+                    Console.WriteLine("Invalid option. Please try again.");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    break;
+                
+            }
+
         }
+    }
 
     void AddBook()
     {
+        var newBook = new Book();
+        
         Console.Clear();
         Console.WriteLine("Add book");
     
@@ -129,7 +147,7 @@ public class LibraryUI
     void ViewAllBooks()
     {
         Console.Clear();
-        Console.WriteLine("All books in library");
+        Console.WriteLine("All books in library \n");
         
         if (library.GetAllBooks().Count == 0)
         {
@@ -141,7 +159,7 @@ public class LibraryUI
             {
                 Console.WriteLine($"Title: {book.Title} \n" +
                                   $"Author: {book.Author} \n" +
-                                  $"Year: {book.Year}");
+                                  $"Year: {book.Year} \n");
             }
         }
         
