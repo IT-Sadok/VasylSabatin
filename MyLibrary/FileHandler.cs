@@ -3,8 +3,8 @@ using System.Text.Json;
 
 public class FileHandler
 {
-    public const string FileName = "books.json";
-    public void SavingFile(List<Book> books)
+    private const string FileName = "books.json";
+    public void SaveBooks(List<Book> books)
     {
         var json = JsonSerializer.Serialize(books, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(FileName, json);
