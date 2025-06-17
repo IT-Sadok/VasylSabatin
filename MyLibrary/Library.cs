@@ -20,6 +20,14 @@ public class Library
     
     public void AddBook(Book book)
     {
+        bool exists = _books.Any(b  => b.Title == book.Title &&  b.Author == book.Author && b.Year == book.Year);
+
+        if (exists)
+        {
+            Console.WriteLine("Book already exists.");
+            return;
+        }
+
         book.Id = _nextId;
         _books.Add(book);
         _nextId++;
@@ -43,20 +51,16 @@ public class Library
     }
 
     public Dictionary<string, List<Book>> GetBooksByAuthor()
-    {
-        var booksByAuthor = _books.GroupBy(book => book.Author)
+    { 
+        return _books.GroupBy(book => book.Author)
             .OrderBy(group => group.Key)
             .ToDictionary(group => group.Key,group => group.ToList());
-        
-        return booksByAuthor;
-    }
+    } 
 
     public Dictionary<int, int> GetBooksCountByYear()
     {
-        var  booksByYear = _books.GroupBy(book => book.Year)
+        return _books.GroupBy(book => book.Year)
             .ToDictionary(group => group.Key, group => group.Count());
-        
-        return booksByYear;
     }
 
     public List<Book> GetBooksByYearAndAuthor(int year, string author)

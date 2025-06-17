@@ -16,8 +16,11 @@ public class LibraryUI
                               "1. Add book\n" +
                               "2. Delete book\n" +
                               "3. Search book\n" +
-                              "4. View all books");
-            Console.WriteLine("Select an option (1-4): ");
+                              "4. View all books\n" + 
+                              "5. View all books by author\n" + 
+                              "6. View books count by year\n" + 
+                              "7. Find books by year and author");
+            Console.WriteLine("Select an option (1-7): ");
         
             var option = Console.ReadLine();
         
@@ -42,6 +45,15 @@ public class LibraryUI
                 case "4":
                     ViewAllBooks();
                     break;
+                case "5":
+                    ViewAllBooksByAuthor();
+                    break;
+                case "6":
+                    ViewBooksCountByYear();
+                    break;
+                case "7":
+                    ViewBooksByYearAndAuthor();
+                    break;
                 default:
                     Console.WriteLine("Invalid option. Please try again.");
                     Console.WriteLine("Press any key to continue...");
@@ -58,23 +70,27 @@ public class LibraryUI
         var newBook = new Book();
         
         Console.Clear();
-        Console.WriteLine("Add book");
+        Console.WriteLine("Add book\n");
     
         Console.Write("Enter the book's title: ");
-        book.Title = Console.ReadLine();
+        newBook.Title = Console.ReadLine();
 
         Console.Write("Enter the book's author: ");
-        book.Author = Console.ReadLine();
+        newBook.Author = Console.ReadLine();
     
         Console.Write("Enter the book's publication year: ");
         string? yearInput = Console.ReadLine();
         bool yearResult = int.TryParse(yearInput, out int year);
         if (yearResult == true)
-            book.Year = year;
+            newBook.Year = year;
         else
+        {
             Console.WriteLine("Invalid input, try again");
+            Console.ReadKey();
+            return;
+        }
     
-        library.AddBook(book);
+        library.AddBook(newBook);
     
         Console.WriteLine("Book added successfully.");
         Console.WriteLine("Press any key to return to the main menu.");
@@ -84,7 +100,7 @@ public class LibraryUI
     void DeleteBook()
     {
         Console.Clear();
-        Console.WriteLine("Delete book");
+        Console.WriteLine("Delete book\n");
         
         Console.WriteLine("Enter the book's ID to delete: ");
         int id;
@@ -93,7 +109,7 @@ public class LibraryUI
             var firstOrDefault = library.GetAllBooks().FirstOrDefault(b => b.Id == id);
             if (firstOrDefault != null)
             {
-                library.DeleteBook(book);
+                library.DeleteBook(firstOrDefault);
                 Console.WriteLine($"Book with ID {id} has been deleted.");
                 
             }
@@ -114,7 +130,7 @@ public class LibraryUI
     void SearchBook()
     {
         Console.Clear();
-        Console.WriteLine("Search book");
+        Console.WriteLine("Search book\n");
         
         Console.WriteLine("Enter the book's author or ID: ");
         var input = Console.ReadLine();
@@ -164,6 +180,108 @@ public class LibraryUI
         }
         
         Console.WriteLine("Press any key to return to the main menu.");
+        Console.ReadKey();
+    }
+
+    void ViewAllBooksByAuthor()
+    {
+        Console.Clear();
+        Console.WriteLine("All books by author\n");
+        
+        Console.WriteLine("Enter the author's name: ");
+        var authorInput = Console.ReadLine();
+        
+        var authorResult =  library.GetAllBooks()
+            .Where(b => b.Author.Equals(authorInput, StringComparison.OrdinalIgnoreCase)).ToList();
+        
+        Console.Clear();
+        
+        if (authorResult.Count() == 0)
+        {
+            Console.WriteLine("No books found for the author.");
+        }
+        else
+            Console.WriteLine($"" +
+                              $"Books by {authorInput}:");
+
+        foreach (var searchBook in authorResult)
+        {
+            Console.WriteLine($"- {searchBook.Title} ({searchBook.Year})");
+        }
+
+        Console.WriteLine("Press any key to return to the main menu.");
+        Console.ReadKey();
+    }
+    
+    void ViewBooksCountByYear()
+    {
+        Console.Clear();
+        Console.WriteLine("Books count by year\n");
+        
+        Console.WriteLine("Enter publication year: ");
+        var yearInput = Console.ReadLine();
+
+        if (!int.TryParse(yearInput, out int year))
+        {
+            Console.WriteLine("Invalid input, please try again.");
+            Console.WriteLine("Press any key to return to the main menu.");
+            Console.ReadKey();
+            return;
+        }
+
+        var booksCountByYear = library.GetBooksCountByYear();
+
+        if (booksCountByYear.TryGetValue(year, out int booksCount))
+        {
+            Console.WriteLine($"Books count: {booksCount}");
+        }
+        else
+        {
+            Console.WriteLine($"No books found for year {year}.");
+        }
+        
+        Console.WriteLine("\nPress any key to return to the main menu.");
+        Console.ReadKey();
+    }
+
+    void ViewBooksByYearAndAuthor()
+    {
+        Console.Clear();
+        Console.WriteLine("Books by year and author\n");
+        
+        Console.WriteLine("Enter the author's name: ");
+        var authorInput = Console.ReadLine();
+        
+        Console.WriteLine("Enter the publication year: ");
+        var publicationYearInput = Console.ReadLine();
+
+        if (!int.TryParse(publicationYearInput, out int publicationYear))
+        {
+            Console.WriteLine("Invalid input, please try again.");
+            Console.WriteLine("Press any key to return to the main menu.");
+            Console.ReadKey();
+            return;
+        }
+        
+        Console.Clear();
+        
+        var viewBooks =  library.GetBooksByYearAndAuthor(publicationYear, authorInput);
+        
+        if (viewBooks.Count == 0)
+        {
+            Console.WriteLine("No books found.");
+        }
+        else
+        {
+            Console.WriteLine($"Books by {authorInput} in {publicationYear}:");
+            foreach (var book in viewBooks)
+            {
+                Console.WriteLine($"- {book.Title}");
+            }
+
+        }
+        
+        Console.WriteLine("\nPress any key to return to the main menu.");
         Console.ReadKey();
     }
 }
