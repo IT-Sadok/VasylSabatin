@@ -32,16 +32,14 @@ public class Library
         fileHandler.SaveBooks(_books);
     }
 
-    public Book? SearchBook(string input)
+    public Book? SearchBookById(int id)
     {
-        if (int.TryParse(input, out int id))
-        {
-            return _books.FirstOrDefault(b => b.Id == id);
-        }
-        else
-        {
-            return _books.FirstOrDefault(b => b.Author.Equals(input,  StringComparison.OrdinalIgnoreCase));
-        }
+        return _books.FirstOrDefault(b => b.Id == id);
+    }
+
+    public Book? SearchBookByAuthor(string author)
+    {
+        return _books.FirstOrDefault(b => b.Author.Equals(author,  StringComparison.OrdinalIgnoreCase));
     }
 
     public List<Book>? GetAllBooks()

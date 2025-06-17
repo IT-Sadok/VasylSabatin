@@ -106,7 +106,7 @@ public class LibraryUI
         int id;
         if (int.TryParse(Console.ReadLine(), out id))
         {
-            var foundBook = library.SearchBook(id.ToString());
+            var foundBook = library.SearchBookById(id);
             
             if (foundBook != null)
             {
@@ -136,7 +136,16 @@ public class LibraryUI
         Console.WriteLine("Enter the book's author or ID: ");
         var input = Console.ReadLine();
 
-        var foundBook = library.SearchBook(input);
+        Book? foundBook;
+
+        if (int.TryParse(input, out int id))
+        {
+            foundBook = library.SearchBookById(id);
+        }
+        else
+        {
+            foundBook = library.SearchBookByAuthor(input);
+        }
 
         if (foundBook != null)
         {
