@@ -2,7 +2,7 @@ namespace MyLibrary;
 
 public class Library
 {
-    private List<Book>? _books = new List<Book>();
+    private List<Book> _books = new List<Book>();
     private int _nextId;
     FileHandler fileHandler = new FileHandler();
 
@@ -32,9 +32,16 @@ public class Library
         fileHandler.SaveBooks(_books);
     }
 
-    public Book? SearchBook(int id, string author)
+    public Book? SearchBook(string input)
     {
-        return _books.FirstOrDefault(book => book.Id == id || book.Author == author);
+        if (int.TryParse(input, out int id))
+        {
+            return _books.FirstOrDefault(b => b.Id == id);
+        }
+        else
+        {
+            return _books.FirstOrDefault(b => b.Author.Equals(input,  StringComparison.OrdinalIgnoreCase));
+        }
     }
 
     public List<Book>? GetAllBooks()

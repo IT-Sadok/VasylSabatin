@@ -10,7 +10,7 @@ public class FileHandler
         File.WriteAllText(FileName, json);
     }
 
-    public List<Book>? LoadBooks()
+    public List<Book> LoadBooks()
     {
         if (File.Exists(FileName))
         {

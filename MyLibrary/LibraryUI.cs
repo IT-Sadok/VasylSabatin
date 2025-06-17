@@ -65,7 +65,7 @@ public class LibraryUI
         }
     }
 
-    void AddBook()
+    private void AddBook()
     {
         var newBook = new Book();
         
@@ -97,7 +97,7 @@ public class LibraryUI
         Console.ReadKey();
     }
     
-    void DeleteBook()
+    private void DeleteBook()
     {
         Console.Clear();
         Console.WriteLine("Delete book\n");
@@ -106,10 +106,11 @@ public class LibraryUI
         int id;
         if (int.TryParse(Console.ReadLine(), out id))
         {
-            var firstOrDefault = library.GetAllBooks().FirstOrDefault(b => b.Id == id);
-            if (firstOrDefault != null)
+            var foundBook = library.SearchBook(id.ToString());
+            
+            if (foundBook != null)
             {
-                library.DeleteBook(firstOrDefault);
+                library.DeleteBook(foundBook);
                 Console.WriteLine($"Book with ID {id} has been deleted.");
                 
             }
@@ -127,7 +128,7 @@ public class LibraryUI
         Console.ReadKey();
     }
 
-    void SearchBook()
+    private void SearchBook()
     {
         Console.Clear();
         Console.WriteLine("Search book\n");
@@ -135,32 +136,22 @@ public class LibraryUI
         Console.WriteLine("Enter the book's author or ID: ");
         var input = Console.ReadLine();
 
-        Book? foundBook = null;
-        if (int.TryParse(input, out int id))
-        {
-            foundBook = library.GetAllBooks().
-                FirstOrDefault(b => b.Id == id);
-        }
-        else
-        {
-            foundBook = library.GetAllBooks().
-                FirstOrDefault(b => b.Author.Equals(input, StringComparison.OrdinalIgnoreCase));
-        }
+        var foundBook = library.SearchBook(input);
 
         if (foundBook != null)
         {
-            Console.WriteLine($"Book found: {foundBook.Title}, {foundBook.Author}, {foundBook.Year}");
+            Console.WriteLine($"Book found: {foundBook.Title} by {foundBook.Author} ({foundBook.Year})");
         }
         else
         {
-            Console.WriteLine("No book found with that ID or author name.");
+            Console.WriteLine("Book not found.");
         }
-        
+
         Console.WriteLine("Press any key to return to the main menu.");
         Console.ReadKey();
     }
 
-    void ViewAllBooks()
+    private void ViewAllBooks()
     {
         Console.Clear();
         Console.WriteLine("All books in library \n");
@@ -183,7 +174,7 @@ public class LibraryUI
         Console.ReadKey();
     }
 
-    void ViewAllBooksByAuthor()
+    private void ViewAllBooksByAuthor()
     {
         Console.Clear();
         Console.WriteLine("All books by author\n");
@@ -213,7 +204,7 @@ public class LibraryUI
         Console.ReadKey();
     }
     
-    void ViewBooksCountByYear()
+    private void ViewBooksCountByYear()
     {
         Console.Clear();
         Console.WriteLine("Books count by year\n");
@@ -244,7 +235,7 @@ public class LibraryUI
         Console.ReadKey();
     }
 
-    void ViewBooksByYearAndAuthor()
+    private void ViewBooksByYearAndAuthor()
     {
         Console.Clear();
         Console.WriteLine("Books by year and author\n");
