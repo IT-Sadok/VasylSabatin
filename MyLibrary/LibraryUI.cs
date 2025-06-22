@@ -5,7 +5,7 @@ using MyLibrary;
 public class LibraryUI
 { 
     Book book = new Book();
-    Library library = new Library();
+    Library library = new Library(new FileHandler());
 
     public void DisplayMenu()
     {
@@ -19,8 +19,9 @@ public class LibraryUI
                               "4. View all books\n" + 
                               "5. View all books by author\n" + 
                               "6. View books count by year\n" + 
-                              "7. Find books by year and author");
-            Console.WriteLine("Select an option (1-7): ");
+                              "7. Find books by year and author\n" +
+                              "8. Library simulation");
+            Console.WriteLine("Select an option (1-8): ");
         
             var option = Console.ReadLine();
         
@@ -53,6 +54,9 @@ public class LibraryUI
                     break;
                 case "7":
                     ViewBooksByYearAndAuthor();
+                    break;
+                case "8":
+                    RunLibrarySimulation();
                     break;
                 default:
                     Console.WriteLine("Invalid option. Please try again.");
@@ -138,7 +142,7 @@ public class LibraryUI
 
         Book? foundBook;
 
-        if (int.TryParse(input, out int id))
+        if (int.TryParse(input,   out int id))
         {
             foundBook = library.SearchBookById(id);
         }
@@ -282,6 +286,20 @@ public class LibraryUI
         }
         
         Console.WriteLine("\nPress any key to return to the main menu.");
+        Console.ReadKey();
+    }
+
+    private async Task RunLibrarySimulation()
+    {
+        Console.Clear();
+        
+        Console.WriteLine("Starting library simulation...\n");
+        var simulation = new LibrarySimulation(library);
+        
+        Console.WriteLine("Simulation is running, please wait...\n");
+        await simulation.RunSimulation();
+        
+        Console.WriteLine("\nSimulation finished. Press any key to return to the main menu.");
         Console.ReadKey();
     }
 }
