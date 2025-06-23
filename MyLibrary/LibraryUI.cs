@@ -289,7 +289,7 @@ public class LibraryUI
         Console.ReadKey();
     }
 
-    private async Task RunLibrarySimulation()
+    private void RunLibrarySimulation()
     {
         Console.Clear();
         
@@ -297,7 +297,7 @@ public class LibraryUI
         var simulation = new LibrarySimulation(library);
         
         Console.WriteLine("Simulation is running, please wait...\n");
-        await simulation.RunSimulation();
+        simulation.RunSimulation();
         
         Console.WriteLine("\nSimulation finished. Press any key to return to the main menu.");
         Console.ReadKey();

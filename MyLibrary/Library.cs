@@ -5,6 +5,7 @@ public class Library
     private List<Book> _books = new List<Book>();
     private int _nextId;
     private readonly FileHandler _fileHandler;
+    private readonly object _lock = new object();
 
     public Library(FileHandler fileHandler)
     {
@@ -14,7 +15,10 @@ public class Library
 
     private void SaveChanges()
     {
-        _fileHandler.SaveBooks(_books);
+        lock (_lock)
+        {
+            _fileHandler.SaveBooks(_books);
+        }
     }
 
     private void LoadBooks()
@@ -26,51 +30,71 @@ public class Library
     
     public void AddBook(Book book)
     {
-        book.Id = _nextId;
-        _books.Add(book);
-        _nextId++;
-        SaveChanges();
+        lock (_lock)
+        {
+            book.Id = _nextId;
+            _books.Add(book);
+            _nextId++;
+            SaveChanges(); 
+        }
     }
 
     public void DeleteBook(Book book)
     {
-        _books.Remove(book);
-        SaveChanges();
+        lock (_lock)
+        {
+            _books.Remove(book);
+            SaveChanges();
+        }
     }
 
     public Book? SearchBookById(int id)
     {
-        return _books.FirstOrDefault(b => b.Id == id);
+        lock (_lock)
+        {
+            return _books.FirstOrDefault(b => b.Id == id);
+        }
     }
 
     public Book? SearchBookByAuthor(string author)
     {
-        return _books.FirstOrDefault(b => b.Author.Equals(author,  StringComparison.OrdinalIgnoreCase));
+        lock (_lock)
+        {
+            return _books.FirstOrDefault(b => b.Author.Equals(author,  StringComparison.OrdinalIgnoreCase));  
+        }
     }
     public List<Book>? GetAllBooks()
     {
-        return _books.ToList();
+        lock (_lock)
+        {
+            return _books.ToList();
+        }
     }
 
     public Dictionary<string, List<Book>> GetBooksByAuthor()
     {
-        var booksByAuthor = _books.GroupBy(book => book.Author)
-            .OrderBy(group => group.Key)
-            .ToDictionary(group => group.Key,group => group.ToList());
-        
-        return booksByAuthor;
+        lock (_lock)
+        {
+            return _books.GroupBy(book => book.Author)
+                .OrderBy(group => group.Key)
+                .ToDictionary(group => group.Key,group => group.ToList());
+        }
     }
 
     public Dictionary<int, int> GetBooksCountByYear()
     {
-        var  booksByYear = _books.GroupBy(book => book.Year)
-            .ToDictionary(group => group.Key, group => group.Count());
-        
-        return booksByYear;
+        lock (_lock)
+        {
+            return _books.GroupBy(book => book.Year)
+                .ToDictionary(group => group.Key, group => group.Count());
+        }
     }
 
     public List<Book> GetBooksByYearAndAuthor(int year, string author)
     {
-        return _books.Where(book => book.Year == year && book.Author == author).ToList();
+        lock (_lock)
+        {
+            return _books.Where(book => book.Year == year && book.Author == author).ToList();
+        }
     }
 }    

@@ -3,70 +3,64 @@ namespace MyLibrary;
 public class LibrarySimulation
 {
     private readonly Library _library;
-    private readonly SemaphoreSlim _semaphore;
-    private readonly Random _random = new Random();
     
     public LibrarySimulation(Library library)
     {
         _library = library ?? throw new ArgumentNullException(nameof(library));
-        _semaphore = new SemaphoreSlim(5,5);
     }
 
-    public async Task RunSimulation()
+    public void RunSimulation()
     {
-        var tasks = new Task[100];
+        var threads = new Thread[100];
 
         for (var i = 0; i < 100; i++)
         {
-            tasks[i] = SimulateRandomOperation();
-        }
-        await Task.WhenAll(tasks);
+            threads[i] = new Thread(SimulateRandomOperation);
+            threads[i].Start();
+        } 
+        
+        for (var i = 0; i < 100; i++)
+        {
+            threads[i].Join();
+        } 
     }
 
-    private async Task SimulateRandomOperation()
+    private void SimulateRandomOperation()
     {
-        await _semaphore.WaitAsync();
+        var localRandom = new Random(Guid.NewGuid().GetHashCode());
+        Thread.Sleep(localRandom.Next(500, 1000));
 
-        try
+        if (localRandom.Next(2) == 0)
         {
-            await Task.Delay(_random.Next(200, 1000));
-
-            if (_random.Next(2) == 0)
-            {
-                ModifyRandomBook();
-            }
-            else
-            {
-                UpdateRandomAuthor();
-            }
+            ModifyRandomBook(localRandom);
         }
-        finally
+        else
         {
-            _semaphore.Release();
+            UpdateRandomAuthor(localRandom);
         }
     }
     
-    private void ModifyRandomBook()
+    private void ModifyRandomBook(Random random)
     {
         var books = _library.GetAllBooks();
         if (!books.Any()) return;
 
-        var randomBook = books[_random.Next(books.Count)];
+        var randomBook = books[random.Next(books.Count)];
         
-        randomBook.Title = GenerateRandomTitle();
-        randomBook.Year = _random.Next(1900, 2024);
+        randomBook.Title = GenerateRandomTitle(random);
+        randomBook.Year = random.Next(1900, 2024);
     }
 
-    private void UpdateRandomAuthor()
+    private void UpdateRandomAuthor(Random random)
     {
         var books = _library.GetAllBooks();
         if (!books.Any()) return;
         
-        var randomBook = books[_random.Next(books.Count)];
-        randomBook.Author = GenerateRandomAuthor();
+        var randomBook = books[random.Next(books.Count)];
+        randomBook.Author = GenerateRandomAuthor(random);
     }
 
-    private string GenerateRandomTitle()
+    private string GenerateRandomTitle(Random randomTitle)
     {
         var titles = new[]
         {
@@ -86,10 +80,10 @@ public class LibrarySimulation
             "The Silent Pact",
             "Kingdom of Ashes"
         };
-        return titles[_random.Next(titles.Length)];
+        return titles[randomTitle.Next(titles.Length)];
     }
 
-    private string GenerateRandomAuthor()
+    private string GenerateRandomAuthor(Random randomAuthor)
     {
         var authors = new[]
         {
@@ -109,6 +103,6 @@ public class LibrarySimulation
             "Charlotte White",
             "Daniel Harris"
         };
-        return authors[_random.Next(authors.Length)];
+        return authors[randomAuthor.Next(authors.Length)];
     }
 }
