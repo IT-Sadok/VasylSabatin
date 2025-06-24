@@ -7,7 +7,7 @@ public class LibraryUI
     Book book = new Book();
     Library library = new Library(new FileHandler());
 
-    public void DisplayMenu()
+    public async Task DisplayMenuAsync()
     {
         while (true)
         {
@@ -56,7 +56,7 @@ public class LibraryUI
                     ViewBooksByYearAndAuthor();
                     break;
                 case "8":
-                    RunLibrarySimulation();
+                    await RunLibrarySimulationAsync();
                     break;
                 default:
                     Console.WriteLine("Invalid option. Please try again.");
@@ -289,17 +289,16 @@ public class LibraryUI
         Console.ReadKey();
     }
 
-    private void RunLibrarySimulation()
+    private async Task RunLibrarySimulationAsync()
     {
         Console.Clear();
-        
         Console.WriteLine("Starting library simulation...\n");
+
         var simulation = new LibrarySimulation(library);
         
-        Console.WriteLine("Simulation is running, please wait...\n");
-        simulation.RunSimulation();
+        await simulation.RunSimulationAsync();
         
-        Console.WriteLine("\nSimulation finished. Press any key to return to the main menu.");
+        Console.WriteLine("Simulation finished. Press any key to return to the main menu.");
         Console.ReadKey();
     }
 }

@@ -1,42 +1,50 @@
+using System.Diagnostics;
+
 namespace MyLibrary;
 
 public class LibrarySimulation
 {
     private readonly Library _library;
+    private readonly SemaphoreSlim _semaphore;
     
     public LibrarySimulation(Library library)
     {
         _library = library ?? throw new ArgumentNullException(nameof(library));
+        _semaphore = new SemaphoreSlim(3, 3);
     }
 
-    public void RunSimulation()
+    public async Task RunSimulationAsync()
     {
-        var threads = new Thread[100];
+        var tasks = new Task[100];
 
         for (var i = 0; i < 100; i++)
         {
-            threads[i] = new Thread(SimulateRandomOperation);
-            threads[i].Start();
-        } 
-        
-        for (var i = 0; i < 100; i++)
-        {
-            threads[i].Join();
-        } 
+            tasks[i] = SimulateRandomOperationAsync();
+        }
+        await Task.WhenAll(tasks);
     }
 
-    private void SimulateRandomOperation()
+    private async Task SimulateRandomOperationAsync()
     {
         var localRandom = new Random(Guid.NewGuid().GetHashCode());
-        Thread.Sleep(localRandom.Next(500, 1000));
+        await _semaphore.WaitAsync();
 
-        if (localRandom.Next(2) == 0)
+        try
         {
-            ModifyRandomBook(localRandom);
+            await Task.Delay(localRandom.Next(500, 1000));
+            
+            if (localRandom.Next(2) == 0)
+            {
+                ModifyRandomBook(localRandom);
+            }
+            else
+            {
+                await UpdateRandomAuthor(localRandom);
+            }
         }
-        else
+        finally
         {
-            UpdateRandomAuthor(localRandom);
+            _semaphore.Release();
         }
     }
     
@@ -51,7 +59,7 @@ public class LibrarySimulation
         randomBook.Year = random.Next(1900, 2024);
     }
 
-    private void UpdateRandomAuthor(Random random)
+    private async Task UpdateRandomAuthor(Random random)
     {
         var books = _library.GetAllBooks();
         if (!books.Any()) return;

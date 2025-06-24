@@ -73,28 +73,19 @@ public class Library
 
     public Dictionary<string, List<Book>> GetBooksByAuthor()
     {
-        lock (_lock)
-        {
             return _books.GroupBy(book => book.Author)
                 .OrderBy(group => group.Key)
                 .ToDictionary(group => group.Key,group => group.ToList());
-        }
     }
 
     public Dictionary<int, int> GetBooksCountByYear()
     {
-        lock (_lock)
-        {
             return _books.GroupBy(book => book.Year)
                 .ToDictionary(group => group.Key, group => group.Count());
-        }
     }
 
     public List<Book> GetBooksByYearAndAuthor(int year, string author)
     {
-        lock (_lock)
-        {
             return _books.Where(book => book.Year == year && book.Author == author).ToList();
-        }
     }
 }    
