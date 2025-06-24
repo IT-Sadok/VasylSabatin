@@ -13,7 +13,7 @@ public class Library
         LoadBooks();
     }
 
-    private void SaveChanges()
+    public void SaveChanges()
     {
         lock (_lock)
         {

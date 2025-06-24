@@ -7,7 +7,7 @@ public class LibraryUI
     Book book = new Book();
     Library library = new Library(new FileHandler());
 
-    public async Task DisplayMenuAsync()
+    public async Task DisplayMenu()
     {
         while (true)
         {
@@ -288,16 +288,17 @@ public class LibraryUI
         Console.WriteLine("\nPress any key to return to the main menu.");
         Console.ReadKey();
     }
-
+    
     private async Task RunLibrarySimulationAsync()
     {
         Console.Clear();
-        Console.WriteLine("Starting library simulation...\n");
 
+        Console.WriteLine("Starting library simulation...\n");
         var simulation = new LibrarySimulation(library);
-        
+
+        Console.WriteLine("Simulation is running, please wait...\n");
         await simulation.RunSimulationAsync();
-        
+
         Console.WriteLine("Simulation finished. Press any key to return to the main menu.");
         Console.ReadKey();
     }
