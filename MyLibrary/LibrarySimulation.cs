@@ -5,6 +5,7 @@ namespace MyLibrary;
 public class LibrarySimulation
 {
     private readonly Library _library;
+    private readonly object _simulationlock= new object();
 
     public LibrarySimulation(Library library)
     {
@@ -29,13 +30,16 @@ public class LibrarySimulation
         var localRandom = new Random(Guid.NewGuid().GetHashCode());
         Task.Delay(localRandom.Next(500, 1000));
 
-        if (localRandom.Next(2) == 0)
+        lock (_simulationlock)
         {
-            ModifyRandomBook(localRandom);
-        }
-        else
-        {
-            await UpdateRandomAuthor(localRandom);
+            if (localRandom.Next(2) == 0)
+            {
+                ModifyRandomBook(localRandom);
+            }
+            else
+            {
+                UpdateRandomAuthor(localRandom);
+            }
         }
     }
 
@@ -49,7 +53,7 @@ public class LibrarySimulation
         randomBook.Year = random.Next(1900, 2024);
     }
 
-    private async Task UpdateRandomAuthor(Random random)
+    private void UpdateRandomAuthor(Random random)
     {
         var books = _library.GetAllBooks();
         if (!books.Any()) return;

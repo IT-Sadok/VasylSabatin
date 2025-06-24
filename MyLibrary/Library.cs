@@ -50,42 +50,33 @@ public class Library
 
     public Book? SearchBookById(int id)
     {
-        lock (_lock)
-        {
-            return _books.FirstOrDefault(b => b.Id == id);
-        }
+        return _books.FirstOrDefault(b => b.Id == id);
     }
 
     public Book? SearchBookByAuthor(string author)
     {
-        lock (_lock)
-        {
-            return _books.FirstOrDefault(b => b.Author.Equals(author,  StringComparison.OrdinalIgnoreCase));  
-        }
+        return _books.FirstOrDefault(b => b.Author.Equals(author,  StringComparison.OrdinalIgnoreCase));  
     }
     public List<Book>? GetAllBooks()
     {
-        lock (_lock)
-        {
-            return _books.ToList();
-        }
+        return _books.ToList();
     }
 
     public Dictionary<string, List<Book>> GetBooksByAuthor()
     {
-            return _books.GroupBy(book => book.Author)
-                .OrderBy(group => group.Key)
-                .ToDictionary(group => group.Key,group => group.ToList());
+        return _books.GroupBy(book => book.Author)
+            .OrderBy(group => group.Key)
+            .ToDictionary(group => group.Key,group => group.ToList());
     }
 
     public Dictionary<int, int> GetBooksCountByYear()
     {
-            return _books.GroupBy(book => book.Year)
-                .ToDictionary(group => group.Key, group => group.Count());
+        return _books.GroupBy(book => book.Year)
+            .ToDictionary(group => group.Key, group => group.Count());
     }
 
     public List<Book> GetBooksByYearAndAuthor(int year, string author)
     {
-            return _books.Where(book => book.Year == year && book.Author == author).ToList();
+        return _books.Where(book => book.Year == year && book.Author == author).ToList();
     }
 }    
