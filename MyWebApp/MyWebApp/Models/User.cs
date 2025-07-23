@@ -9,7 +9,7 @@ public class User : IdentityUser<int>
 {
     public int AccountId { get; set; }
     
-    [ForeignKey(nameof(AccountId))]
+    public DateTime CreatedAt { get; set; }
     
-    public Account? Account { get; set; }
+    public string? Description { get; set; }
 }

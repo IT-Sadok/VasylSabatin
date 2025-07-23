@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MyWebApp.Interfaces;
 using MyWebApp.Options;
 
 namespace MyWebApp;
@@ -31,9 +32,4 @@ public class JwtService(IOptions<JwtOptions> jwtOptions) : IJwtService
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
-}
-
-public interface IJwtService
-{
-    string GenerateJwtToken(string userName, int userId);
 }
