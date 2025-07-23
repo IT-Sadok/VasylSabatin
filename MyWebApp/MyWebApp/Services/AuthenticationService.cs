@@ -2,21 +2,21 @@ using Microsoft.AspNetCore.Identity;
 using MyWebApp.Data;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
+using MyWebApp.Interfaces;
 using MyWebApp.Models;
 
 namespace MyWebApp;
 
-public class UserService : IUserService
+public class AuthenticationService : IAuthenticationService
 {
     private readonly UserManager<User> _userManager;
     
     private readonly ApplicationContext _dbContext;
     private readonly IJwtService _jwtService;
 
-    public UserService(UserManager<User> userManager, 
+    public AuthenticationService(UserManager<User> userManager, 
         ApplicationContext dbContext, 
-        IJwtService jwtService, 
-        IHttpContextAccessor contextAccessor)
+        IJwtService jwtService)
     {
         _userManager = userManager;
         _dbContext = dbContext;
@@ -25,21 +25,15 @@ public class UserService : IUserService
     
     public async Task<AuthModel> RegisterUserAsync(SignUpModel model)
     {
-        var account = new Account
+        var user = new User
         {
+            UserName = model.Username,
+            Email = model.Email,
             CreatedAt = DateTime.UtcNow,
             Description = model.AccountDescription
         };
 
-        _dbContext.Accounts.Add(account);
-        await _dbContext.SaveChangesAsync();
-
-        var user = new User
-        {
-            AccountId = account.Id,
-            UserName = model.Username,
-            Email = model.Email
-        };
+        _dbContext.Users.Add(user);
 
         var result = await _userManager.CreateAsync(user, model.Password);
 
@@ -74,11 +68,4 @@ public class UserService : IUserService
             AccessToken = _jwtService.GenerateJwtToken(user.UserName, user.Id)
         };
     }
-}
-
-    public interface IUserService
-{
-    Task<AuthModel> RegisterUserAsync(SignUpModel model);
-    
-    Task<AuthModel> LoginUserAsync(SignInModel model);
 }

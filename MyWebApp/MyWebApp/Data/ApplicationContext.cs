@@ -13,6 +13,5 @@ public class ApplicationContext : IdentityDbContext<User, IdentityRole <int>, in
         
     }
     
-    public DbSet<Account> Accounts { get; set; }
     public DbSet<User> Users { get; set; }
 }
