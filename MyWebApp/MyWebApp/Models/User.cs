@@ -7,8 +7,6 @@ namespace MyWebApp.Models;
 
 public class User : IdentityUser<int>
 {
-    public int AccountId { get; set; }
-    
     public DateTime CreatedAt { get; set; }
     
     public string? Description { get; set; }

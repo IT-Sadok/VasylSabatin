@@ -33,8 +33,6 @@ public class AuthenticationService : IAuthenticationService
             Description = model.AccountDescription
         };
 
-        _dbContext.Users.Add(user);
-
         var result = await _userManager.CreateAsync(user, model.Password);
 
         if (!result.Succeeded)

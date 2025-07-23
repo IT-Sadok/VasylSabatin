@@ -1,6 +1,3 @@
-using MyWebApp.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using MyWebApp.DTO;
 using MyWebApp.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,10 +16,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapPost("sign-up", async ([FromServices] IAuthenticationService authenticationService, SignUpModel model)
-    => await authenticationService.RegisterUserAsync(model));
-
-app.MapPost("sign-in", async ([FromServices] IAuthenticationService authenticationService, SignInModel model)
-    => await authenticationService.LoginUserAsync(model));
+app.MapAuthEndpoints();
 
 app.Run();
