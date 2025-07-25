@@ -28,9 +28,7 @@ public class AuthenticationService : IAuthenticationService
         var user = new User
         {
             UserName = model.Username,
-            Email = model.Email,
-            CreatedAt = DateTime.UtcNow,
-            Description = model.AccountDescription
+            Email = model.Email
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);

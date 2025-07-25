@@ -1,6 +1,6 @@
 namespace MyWebApp.Constants;
 
-public class AuthConstants
+public class AuthRoutes
 {
     public const string SignUp = "sign-up";
     

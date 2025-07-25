@@ -3,11 +3,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MyWebApp.Models;
 
-[Table(nameof(User))]
+[Table("Users")]
 
 public class User : IdentityUser<int>
 {
-    public DateTime CreatedAt { get; set; }
+    public string FullName { get; set; }
     
-    public string? Description { get; set; }
+    public int Age { get; set; }
+    
+    public float Weight { get; set; }
+    
+    public ICollection<Workout> Workouts { get; set; }
+    
+    public ICollection<ExerciseGoal> ExerciseGoals { get; set; }
+    
+    public ICollection<BodyGoal> BodyGoals { get; set; }
 }
