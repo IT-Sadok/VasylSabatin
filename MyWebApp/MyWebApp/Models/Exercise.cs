@@ -1,8 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace MyWebApp.Models;
-
-[Table(nameof(Exercise))]
 
 public class Exercise
 {
@@ -13,8 +9,8 @@ public class Exercise
     public string Category { get; set; }
     
     public string? Description { get; set; }
-    
-    public ICollection<WorkoutExercise> WorkoutExercises { get; set; }
-    
-    public ICollection<ExerciseGoal> ExerciseGoals { get; set; }
+
+    public List<WorkoutExercise> WorkoutExercises { get; set; } = [];
+
+    public List<ExerciseGoal> ExerciseGoals { get; set; } = [];
 }
