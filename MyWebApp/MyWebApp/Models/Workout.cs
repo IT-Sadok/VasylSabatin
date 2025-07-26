@@ -3,6 +3,8 @@ using System.Runtime.InteropServices.JavaScript;
 
 namespace MyWebApp.Models;
 
+[Table(nameof(Workout))]
+
 public class Workout
 {
     public int Id { get; set; }

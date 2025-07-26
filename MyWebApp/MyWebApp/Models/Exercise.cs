@@ -1,4 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace MyWebApp.Models;
+
+[Table(nameof(Exercise))]
 
 public class Exercise
 {

@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyWebApp.Models;
 
+[Table(nameof(BodyGoal))]
+
 public class BodyGoal
 {
     public int Id { get; set; }

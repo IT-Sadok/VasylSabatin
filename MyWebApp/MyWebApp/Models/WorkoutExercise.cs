@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyWebApp.Models;
 
+[Table(nameof(WorkoutExercise))]
+
 public class WorkoutExercise
 {
     public int Id { get; set; }

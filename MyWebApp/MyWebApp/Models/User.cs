@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MyWebApp.Models;
 
-[Table("Users")]
+[Table(nameof(User))]
 
 public class User : IdentityUser<int>
 {

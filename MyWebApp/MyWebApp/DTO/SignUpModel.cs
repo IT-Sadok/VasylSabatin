@@ -2,7 +2,11 @@ namespace MyWebApp.DTO;
 
 public class SignUpModel
 {
-    public string Username { get; set; }
+    public string FullName { get; set; }
+    
+    public int Age { get; set; }
+    
+    public float Weight { get; set; }
     
     public string Email { get; set; }
     
