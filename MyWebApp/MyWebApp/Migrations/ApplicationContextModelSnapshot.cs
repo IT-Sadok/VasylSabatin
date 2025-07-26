@@ -154,6 +154,101 @@ namespace MyWebApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MyWebApp.Models.BodyGoal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Deadline")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("GoalType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsAchieved")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TargetValue")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BodyGoal");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.Exercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Exercise");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.ExerciseGoal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Deadline")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsAchieved")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("TargetReps")
+                        .HasColumnType("integer");
+
+                    b.Property<float>("TargetWeight")
+                        .HasColumnType("real");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExerciseGoal");
+                });
+
             modelBuilder.Entity("MyWebApp.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -165,17 +260,11 @@ namespace MyWebApp.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AccountId")
+                    b.Property<int>("Age")
                         .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -184,6 +273,10 @@ namespace MyWebApp.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -218,6 +311,9 @@ namespace MyWebApp.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -228,6 +324,62 @@ namespace MyWebApp.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.Workout", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateOfTraining")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Workout");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.WorkoutExercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Reps")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Sets")
+                        .HasColumnType("integer");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
+
+                    b.Property<int>("WorkoutId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("WorkoutId");
+
+                    b.ToTable("WorkoutExercise");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -279,6 +431,85 @@ namespace MyWebApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.BodyGoal", b =>
+                {
+                    b.HasOne("MyWebApp.Models.User", "User")
+                        .WithMany("BodyGoals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.ExerciseGoal", b =>
+                {
+                    b.HasOne("MyWebApp.Models.Exercise", "Exercise")
+                        .WithMany("ExerciseGoals")
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyWebApp.Models.User", "User")
+                        .WithMany("ExerciseGoals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.Workout", b =>
+                {
+                    b.HasOne("MyWebApp.Models.User", null)
+                        .WithMany("Workouts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.WorkoutExercise", b =>
+                {
+                    b.HasOne("MyWebApp.Models.Exercise", "Exercise")
+                        .WithMany("WorkoutExercises")
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyWebApp.Models.Workout", "Workout")
+                        .WithMany("WorkoutExercises")
+                        .HasForeignKey("WorkoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("Workout");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.Exercise", b =>
+                {
+                    b.Navigation("ExerciseGoals");
+
+                    b.Navigation("WorkoutExercises");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.User", b =>
+                {
+                    b.Navigation("BodyGoals");
+
+                    b.Navigation("ExerciseGoals");
+
+                    b.Navigation("Workouts");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.Workout", b =>
+                {
+                    b.Navigation("WorkoutExercises");
                 });
 #pragma warning restore 612, 618
         }

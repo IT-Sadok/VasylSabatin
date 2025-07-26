@@ -27,10 +27,11 @@ public class AuthenticationService : IAuthenticationService
     {
         var user = new User
         {
-            UserName = model.Username,
+            FullName = model.FullName,
+            Age = model.Age,
+            Weight = model.Weight,
             Email = model.Email,
-            CreatedAt = DateTime.UtcNow,
-            Description = model.AccountDescription
+            UserName = model.Email
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
@@ -44,13 +45,13 @@ public class AuthenticationService : IAuthenticationService
 
         return new AuthModel
         {
-            AccessToken = _jwtService.GenerateJwtToken(user.UserName, user.Id)
+            AccessToken = _jwtService.GenerateJwtToken(user.Email, user.Id)
         };
     }
     
     public async Task<AuthModel> LoginUserAsync(SignInModel model)
     {
-        var user = await _userManager.FindByNameAsync(model.Username);
+        var user = await _userManager.FindByNameAsync(model.Email);
         if (user == null)
         {
             throw new SignInFailedException("User not found. Try again.");
@@ -63,7 +64,7 @@ public class AuthenticationService : IAuthenticationService
         }
         return new AuthModel
         {
-            AccessToken = _jwtService.GenerateJwtToken(user.UserName, user.Id)
+            AccessToken = _jwtService.GenerateJwtToken(user.Email, user.Id)
         };
     }
 }
