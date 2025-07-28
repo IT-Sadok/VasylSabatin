@@ -7,8 +7,6 @@ public class ExerciseGoalConfiguration : IEntityTypeConfiguration<ExerciseGoal>
 {
     public void Configure(EntityTypeBuilder<ExerciseGoal> builder)
     {
-        builder.ToTable("ExerciseGoals");
-        
         builder.HasKey(eg => eg.Id);
         
         builder.Property(tr => tr.TargetReps)

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyWebApp.Constants;
 
 namespace MyWebApp.Models.Configurations;
 
@@ -7,21 +8,19 @@ public class BodyGoalConfiguration : IEntityTypeConfiguration<BodyGoal>
 {
     public void Configure(EntityTypeBuilder<BodyGoal> builder)
     {
-        builder.ToTable("BodyGoal");
-        
         builder.HasKey(bg => bg.Id);
         
         builder.Property(gt => gt.GoalType)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(FieldLengths.DefaultText);
         
         builder.Property(tv => tv.TargetValue)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(FieldLengths.DefaultText);
         
         builder.Property(u => u.Unit)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(FieldLengths.ShortText);
 
         builder.Property(ia => ia.IsAchieved)
             .IsRequired();
