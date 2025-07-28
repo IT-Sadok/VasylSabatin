@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyWebApp.Constants;
 
 namespace MyWebApp.Models.Configurations;
 
@@ -7,17 +8,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("User");
-        
         builder.HasKey(u => u.Id);
         
         builder.Property(u => u.FullName)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(FieldLengths.DefaultText);
 
         builder.Property(u => u.Email)
             .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(FieldLengths.DefaultText);
         
         builder.HasMany(u => u.ExerciseGoals)
             .WithOne(g => g.User)

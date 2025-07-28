@@ -7,8 +7,6 @@ public class WorkoutExerciseConfiguration : IEntityTypeConfiguration<WorkoutExer
 {
     public void Configure(EntityTypeBuilder<WorkoutExercise> builder)
     {
-        builder.ToTable("WorkoutExercise");
-        
         builder.HasKey(we => we.Id);
         
         builder.Property(we => we.Sets)

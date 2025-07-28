@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyWebApp.Constants;
 
 namespace MyWebApp.Models.Configurations;
 
@@ -7,15 +8,13 @@ public class WorkoutConfiguration : IEntityTypeConfiguration<Workout>
 {
     public void Configure(EntityTypeBuilder<Workout> builder)
     {
-        builder.ToTable("Workout");
-        
         builder.HasKey(w => w.Id);
         
         builder.Property(w => w.DateOfTraining)
             .IsRequired();
 
         builder.Property(w => w.Notes)
-            .HasMaxLength(1000);
+            .HasMaxLength(FieldLengths.LongText);
         
         builder.HasOne(w => w.User)
             .WithMany(u => u.Workouts)
