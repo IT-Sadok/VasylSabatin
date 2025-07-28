@@ -1,0 +1,18 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.InteropServices.JavaScript;
+
+namespace MyWebApp.Models;
+
+public class Workout
+{
+    public int Id { get; set; }
+    
+    public int UserId { get; set; }
+    public User User { get; set; }
+    
+    public DateTime DateOfTraining { get; set; }
+    
+    public string? Notes { get; set; }
+    
+    public List<WorkoutExercise> WorkoutExercises { get; set; }
+}

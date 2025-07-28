@@ -3,11 +3,17 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MyWebApp.Models;
 
-[Table(nameof(User))]
-
 public class User : IdentityUser<int>
 {
-    public DateTime CreatedAt { get; set; }
+    public string FullName { get; set; }
     
-    public string? Description { get; set; }
+    public int? Age { get; set; }
+    
+    public double? Weight { get; set; }
+
+    public List<Workout> Workouts { get; set; } = [];
+
+    public List<ExerciseGoal> ExerciseGoals { get; set; } = [];
+
+    public List<BodyGoal> BodyGoals { get; set; } = [];
 }
