@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20250725151248_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250728142126_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -165,23 +165,26 @@ namespace MyWebApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Deadline")
+                    b.Property<DateTime?>("Deadline")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("GoalType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("IsAchieved")
                         .HasColumnType("boolean");
 
                     b.Property<string>("TargetValue")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Unit")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -190,7 +193,7 @@ namespace MyWebApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BodyGoal");
+                    b.ToTable("BodyGoals");
                 });
 
             modelBuilder.Entity("MyWebApp.Models.Exercise", b =>
@@ -203,18 +206,21 @@ namespace MyWebApp.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Exercise");
+                    b.ToTable("Exercises");
                 });
 
             modelBuilder.Entity("MyWebApp.Models.ExerciseGoal", b =>
@@ -225,8 +231,11 @@ namespace MyWebApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Deadline")
+                    b.Property<DateTime?>("Deadline")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("ExerciseGoalId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ExerciseId")
                         .HasColumnType("integer");
@@ -237,19 +246,21 @@ namespace MyWebApp.Migrations
                     b.Property<int>("TargetReps")
                         .HasColumnType("integer");
 
-                    b.Property<float>("TargetWeight")
-                        .HasColumnType("real");
+                    b.Property<double>("TargetWeight")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExerciseGoalId");
+
                     b.HasIndex("ExerciseId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExerciseGoal");
+                    b.ToTable("ExerciseGoals");
                 });
 
             modelBuilder.Entity("MyWebApp.Models.User", b =>
@@ -263,6 +274,9 @@ namespace MyWebApp.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("AccountDescription")
+                        .HasColumnType("text");
+
                     b.Property<int>("Age")
                         .HasColumnType("integer");
 
@@ -271,15 +285,17 @@ namespace MyWebApp.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -314,8 +330,8 @@ namespace MyWebApp.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<float>("Weight")
-                        .HasColumnType("real");
+                    b.Property<double>("Weight")
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
@@ -341,7 +357,8 @@ namespace MyWebApp.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -350,7 +367,7 @@ namespace MyWebApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Workout");
+                    b.ToTable("Workouts");
                 });
 
             modelBuilder.Entity("MyWebApp.Models.WorkoutExercise", b =>
@@ -370,8 +387,8 @@ namespace MyWebApp.Migrations
                     b.Property<int>("Sets")
                         .HasColumnType("integer");
 
-                    b.Property<float>("Weight")
-                        .HasColumnType("real");
+                    b.Property<double>("Weight")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("WorkoutId")
                         .HasColumnType("integer");
@@ -382,7 +399,7 @@ namespace MyWebApp.Migrations
 
                     b.HasIndex("WorkoutId");
 
-                    b.ToTable("WorkoutExercise");
+                    b.ToTable("WorkoutExercises");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -449,6 +466,10 @@ namespace MyWebApp.Migrations
 
             modelBuilder.Entity("MyWebApp.Models.ExerciseGoal", b =>
                 {
+                    b.HasOne("MyWebApp.Models.ExerciseGoal", null)
+                        .WithMany("ExerciseGoals")
+                        .HasForeignKey("ExerciseGoalId");
+
                     b.HasOne("MyWebApp.Models.Exercise", "Exercise")
                         .WithMany("ExerciseGoals")
                         .HasForeignKey("ExerciseId")
@@ -468,11 +489,13 @@ namespace MyWebApp.Migrations
 
             modelBuilder.Entity("MyWebApp.Models.Workout", b =>
                 {
-                    b.HasOne("MyWebApp.Models.User", null)
+                    b.HasOne("MyWebApp.Models.User", "User")
                         .WithMany("Workouts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyWebApp.Models.WorkoutExercise", b =>
@@ -480,7 +503,7 @@ namespace MyWebApp.Migrations
                     b.HasOne("MyWebApp.Models.Exercise", "Exercise")
                         .WithMany("WorkoutExercises")
                         .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MyWebApp.Models.Workout", "Workout")
@@ -499,6 +522,11 @@ namespace MyWebApp.Migrations
                     b.Navigation("ExerciseGoals");
 
                     b.Navigation("WorkoutExercises");
+                });
+
+            modelBuilder.Entity("MyWebApp.Models.ExerciseGoal", b =>
+                {
+                    b.Navigation("ExerciseGoals");
                 });
 
             modelBuilder.Entity("MyWebApp.Models.User", b =>
