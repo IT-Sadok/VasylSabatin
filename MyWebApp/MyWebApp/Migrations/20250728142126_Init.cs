@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyWebApp.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,12 +33,13 @@ namespace MyWebApp.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FullName = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Age = table.Column<int>(type: "integer", nullable: false),
-                    Weight = table.Column<float>(type: "real", nullable: false),
+                    Weight = table.Column<double>(type: "double precision", nullable: false),
+                    AccountDescription = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
@@ -57,18 +58,18 @@ namespace MyWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Exercise",
+                name: "Exercises",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Category = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Category = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Exercise", x => x.Id);
+                    table.PrimaryKey("PK_Exercises", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,23 +179,23 @@ namespace MyWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BodyGoal",
+                name: "BodyGoals",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    GoalType = table.Column<string>(type: "text", nullable: false),
-                    TargetValue = table.Column<string>(type: "text", nullable: false),
-                    Unit = table.Column<string>(type: "text", nullable: false),
-                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    GoalType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TargetValue = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Unit = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsAchieved = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BodyGoal", x => x.Id);
+                    table.PrimaryKey("PK_BodyGoals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BodyGoal_AspNetUsers_UserId",
+                        name: "FK_BodyGoals_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -202,20 +203,20 @@ namespace MyWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Workout",
+                name: "Workouts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     DateOfTraining = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Notes = table.Column<string>(type: "text", nullable: true)
+                    Notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Workout", x => x.Id);
+                    table.PrimaryKey("PK_Workouts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Workout_AspNetUsers_UserId",
+                        name: "FK_Workouts_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -223,7 +224,7 @@ namespace MyWebApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExerciseGoal",
+                name: "ExerciseGoals",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -231,29 +232,35 @@ namespace MyWebApp.Migrations
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     ExerciseId = table.Column<int>(type: "integer", nullable: false),
                     TargetReps = table.Column<int>(type: "integer", nullable: false),
-                    TargetWeight = table.Column<float>(type: "real", nullable: false),
-                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsAchieved = table.Column<bool>(type: "boolean", nullable: false)
+                    TargetWeight = table.Column<double>(type: "double precision", nullable: false),
+                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsAchieved = table.Column<bool>(type: "boolean", nullable: false),
+                    ExerciseGoalId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExerciseGoal", x => x.Id);
+                    table.PrimaryKey("PK_ExerciseGoals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExerciseGoal_AspNetUsers_UserId",
+                        name: "FK_ExerciseGoals_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ExerciseGoal_Exercise_ExerciseId",
+                        name: "FK_ExerciseGoals_ExerciseGoals_ExerciseGoalId",
+                        column: x => x.ExerciseGoalId,
+                        principalTable: "ExerciseGoals",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ExerciseGoals_Exercises_ExerciseId",
                         column: x => x.ExerciseId,
-                        principalTable: "Exercise",
+                        principalTable: "Exercises",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "WorkoutExercise",
+                name: "WorkoutExercises",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -262,21 +269,21 @@ namespace MyWebApp.Migrations
                     ExerciseId = table.Column<int>(type: "integer", nullable: false),
                     Sets = table.Column<int>(type: "integer", nullable: false),
                     Reps = table.Column<int>(type: "integer", nullable: false),
-                    Weight = table.Column<float>(type: "real", nullable: false)
+                    Weight = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkoutExercise", x => x.Id);
+                    table.PrimaryKey("PK_WorkoutExercises", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WorkoutExercise_Exercise_ExerciseId",
+                        name: "FK_WorkoutExercises_Exercises_ExerciseId",
                         column: x => x.ExerciseId,
-                        principalTable: "Exercise",
+                        principalTable: "Exercises",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_WorkoutExercise_Workout_WorkoutId",
+                        name: "FK_WorkoutExercises_Workouts_WorkoutId",
                         column: x => x.WorkoutId,
-                        principalTable: "Workout",
+                        principalTable: "Workouts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -319,34 +326,39 @@ namespace MyWebApp.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BodyGoal_UserId",
-                table: "BodyGoal",
+                name: "IX_BodyGoals_UserId",
+                table: "BodyGoals",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExerciseGoal_ExerciseId",
-                table: "ExerciseGoal",
+                name: "IX_ExerciseGoals_ExerciseGoalId",
+                table: "ExerciseGoals",
+                column: "ExerciseGoalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExerciseGoals_ExerciseId",
+                table: "ExerciseGoals",
                 column: "ExerciseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExerciseGoal_UserId",
-                table: "ExerciseGoal",
+                name: "IX_ExerciseGoals_UserId",
+                table: "ExerciseGoals",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Workout_UserId",
-                table: "Workout",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WorkoutExercise_ExerciseId",
-                table: "WorkoutExercise",
+                name: "IX_WorkoutExercises_ExerciseId",
+                table: "WorkoutExercises",
                 column: "ExerciseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkoutExercise_WorkoutId",
-                table: "WorkoutExercise",
+                name: "IX_WorkoutExercises_WorkoutId",
+                table: "WorkoutExercises",
                 column: "WorkoutId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Workouts_UserId",
+                table: "Workouts",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -368,22 +380,22 @@ namespace MyWebApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BodyGoal");
+                name: "BodyGoals");
 
             migrationBuilder.DropTable(
-                name: "ExerciseGoal");
+                name: "ExerciseGoals");
 
             migrationBuilder.DropTable(
-                name: "WorkoutExercise");
+                name: "WorkoutExercises");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Exercise");
+                name: "Exercises");
 
             migrationBuilder.DropTable(
-                name: "Workout");
+                name: "Workouts");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
