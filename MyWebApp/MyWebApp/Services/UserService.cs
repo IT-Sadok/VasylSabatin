@@ -6,6 +6,8 @@ using MyWebApp.DTO.Exceptions;
 using MyWebApp.Interfaces;
 using MyWebApp.Models;
 using Microsoft.EntityFrameworkCore;
+using MyWebApp.Services;
+using MyWebApp.Services.Interfaces;
 
 namespace MyWebApp;
 
@@ -13,20 +15,20 @@ public class UserService : IUserService
 {
     
     private readonly UserManager<User> _userManager;
-    private readonly ApplicationContext _dbContext;
-    
-    public UserService(UserManager<User> userManager, ApplicationContext dbContext)
+    private readonly IRequesterContext _requesterContext;
+
+    public UserService(UserManager<User> userManager, IRequesterContext requesterContext)
     {
         _userManager = userManager;
-        _dbContext = dbContext;
+        _requesterContext = requesterContext;   
+        
     }
 
-    public async Task<UserProfileModel> GetUserProfileAsync(ClaimsPrincipal userClaims)
+    public async Task<UserProfileModel> GetUserProfileAsync()
     {
-        var userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value
-            ?? userClaims.FindFirst("sub")?.Value;
+        var userId = _requesterContext.GetRequesterContext();
 
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
 
         if (userId == null)
         {
@@ -48,35 +50,26 @@ public class UserService : IUserService
         };
     }
 
-    public async Task UpdateUserProfileAsync(UserUpdateModel dto, ClaimsPrincipal userClaims)
+    public async Task UpdateUserProfileAsync(UserUpdateModel dto)
     {
-        var userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                     ?? userClaims.FindFirst("sub")?.Value;
-
-        var user = await _userManager.FindByIdAsync(userId);
+        var userId = _requesterContext.GetRequesterContext();
 
         if (userId == null)
         {
             throw new InvalidTokenException();
         }
+        
+        var user = await _userManager.FindByIdAsync(userId.ToString());
 
         if (user == null)
         {
             throw new UserNotFoundException();
         }
-
-        if (dto.FullName != null)
-            user.FullName = dto.FullName;
-
-
-        if (dto.Age.HasValue)
-            user.Age = dto.Age.Value;
-
-        if (dto.Weight.HasValue)
-            user.Weight = dto.Weight.Value;
-
-        if (dto.AccountDescription != null)
-            user.AccountDescription = dto.AccountDescription;
+        
+        user.FullName = dto.FullName;
+        user.Age = dto.Age;
+        user.Weight = dto.Weight;
+        user.AccountDescription = dto.AccountDescription;
 
         var result = await _userManager.UpdateAsync(user);
 
@@ -87,15 +80,22 @@ public class UserService : IUserService
         }
     }
 
-    public async Task DeleteUserProfileAsync(int userId)
+    public async Task DeleteUserProfileAsync()
     {
-        var user = await _dbContext.Users.FindAsync(userId);
+        var userId = _requesterContext.GetRequesterContext();
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        
         if (user == null)
         {
             throw new UserNotFoundException();
         }
         
-        _dbContext.Users.Remove(user);
-        await _dbContext.SaveChangesAsync();
+        var result = await _userManager.DeleteAsync(user);
+        
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+            throw new UserUpdateFailedException(errors);
+        }
     }
 }

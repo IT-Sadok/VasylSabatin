@@ -7,6 +7,8 @@ using MyWebApp.Options;
 using System.Text;
 using MyWebApp.Interfaces;
 using MyWebApp.Models;
+using MyWebApp.Services;
+using MyWebApp.Services.Interfaces;
 
 namespace MyWebApp.Extensions;
 
@@ -16,12 +18,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        services.AddAuthorization();
+        services.AddHttpContextAccessor();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
-
-        services.AddAuthorization();
+        services.AddScoped<IRequesterContext, RequesterContext>();
 
         services.AddDbContext<ApplicationContext>(options =>
             options.UseNpgsql(config.GetConnectionString("Database")));

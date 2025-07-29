@@ -6,9 +6,9 @@ namespace MyWebApp.Interfaces;
 
 public interface IUserService
 { 
-    Task<UserProfileModel> GetUserProfileAsync(ClaimsPrincipal userClaims);
+    Task<UserProfileModel> GetUserProfileAsync();
     
-    Task UpdateUserProfileAsync(UserUpdateModel dto, ClaimsPrincipal userClaims);
+    Task UpdateUserProfileAsync(UserUpdateModel dto);
 
-    Task DeleteUserProfileAsync(int userId);
+    Task DeleteUserProfileAsync();
 }

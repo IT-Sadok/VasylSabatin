@@ -22,22 +22,16 @@ public static class EndPointsExtensions
 
     public static WebApplication MapUserEndpoints(this WebApplication app)
     {
-        app.MapGet(UserRoutes.Profile, async (IUserService userService, ClaimsPrincipal user)
-                => await userService.GetUserProfileAsync(user))
+        app.MapGet(UserRoutes.Profile, async (IUserService userService)
+                => await userService.GetUserProfileAsync())
             .RequireAuthorization();
         
-        app.MapPatch(UserRoutes.Update,
-                async ([FromServices] IUserService userService,
-                        [FromBody] UserUpdateModel dto,
-                        ClaimsPrincipal user) =>
-                    await userService.UpdateUserProfileAsync(dto, user))
+        app.MapPut(UserRoutes.Update, async ([FromServices] IUserService userService, [FromBody] UserUpdateModel dto) 
+                    => await userService.UpdateUserProfileAsync(dto))
             .RequireAuthorization();
         
-        app.MapDelete(UserRoutes.Delete, async (HttpContext context, IUserService userService) =>
-            {
-                var userId = context.GetUserId();
-                await userService.DeleteUserProfileAsync(userId);
-            })
+        app.MapDelete(UserRoutes.Delete, async (IUserService userService) 
+                => await userService.DeleteUserProfileAsync())
             .RequireAuthorization();
 
         return app;
