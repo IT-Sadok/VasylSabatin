@@ -1,26 +1,30 @@
 using System.Security.Claims;
+using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Services.Interfaces;
 
 namespace MyWebApp.Services;
 
-public class RequesterContext : IRequesterContext
+public class UserContext : IUserContext
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public RequesterContext(IHttpContextAccessor httpContextAccessor)
+    public UserContext(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public int GetRequesterContext()
+    public RequesterContextModel GetRequesterContext()
     {
         var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                           ?? throw new InvalidTokenException();
         
         if (!int.TryParse(userIdClaim, out var userId))
             throw new InvalidTokenException();
-        
-        return userId;
+
+        return new RequesterContextModel
+        {
+            UserId = userId
+        };
     }
 }

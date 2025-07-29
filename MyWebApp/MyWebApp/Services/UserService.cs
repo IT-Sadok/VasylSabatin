@@ -15,18 +15,18 @@ public class UserService : IUserService
 {
     
     private readonly UserManager<User> _userManager;
-    private readonly IRequesterContext _requesterContext;
+    private readonly IUserContext _userContext;
 
-    public UserService(UserManager<User> userManager, IRequesterContext requesterContext)
+    public UserService(UserManager<User> userManager, IUserContext userContext)
     {
         _userManager = userManager;
-        _requesterContext = requesterContext;   
+        _userContext = userContext;   
         
     }
 
     public async Task<UserProfileModel> GetUserProfileAsync()
     {
-        var userId = _requesterContext.GetRequesterContext();
+        var userId = _userContext.GetRequesterContext();
 
         var user = await _userManager.FindByIdAsync(userId.ToString());
 
@@ -52,7 +52,7 @@ public class UserService : IUserService
 
     public async Task UpdateUserProfileAsync(UserUpdateModel dto)
     {
-        var userId = _requesterContext.GetRequesterContext();
+        var userId = _userContext.GetRequesterContext();
 
         if (userId == null)
         {
@@ -82,7 +82,7 @@ public class UserService : IUserService
 
     public async Task DeleteUserProfileAsync()
     {
-        var userId = _requesterContext.GetRequesterContext();
+        var userId = _userContext.GetRequesterContext();
         var user = await _userManager.FindByIdAsync(userId.ToString());
         
         if (user == null)

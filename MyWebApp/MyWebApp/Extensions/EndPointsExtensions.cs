@@ -26,8 +26,8 @@ public static class EndPointsExtensions
                 => await userService.GetUserProfileAsync())
             .RequireAuthorization();
         
-        app.MapPut(UserRoutes.Update, async ([FromServices] IUserService userService, [FromBody] UserUpdateModel dto) 
-                    => await userService.UpdateUserProfileAsync(dto))
+        app.MapPut(UserRoutes.Update, async ([FromServices] IUserService userService, [FromBody] UserUpdateModel model) 
+                    => await userService.UpdateUserProfileAsync(model))
             .RequireAuthorization();
         
         app.MapDelete(UserRoutes.Delete, async (IUserService userService) 

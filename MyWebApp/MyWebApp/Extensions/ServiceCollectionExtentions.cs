@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IRequesterContext, RequesterContext>();
+        services.AddScoped<IUserContext, UserContext>();
 
         services.AddDbContext<ApplicationContext>(options =>
             options.UseNpgsql(config.GetConnectionString("Database")));
