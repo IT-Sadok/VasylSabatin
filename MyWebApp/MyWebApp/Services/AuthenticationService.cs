@@ -11,7 +11,6 @@ public class AuthenticationService : IAuthenticationService
 {
     private readonly UserManager<User> _userManager;
     
-    private readonly ApplicationContext _dbContext;
     private readonly IJwtService _jwtService;
 
     public AuthenticationService(UserManager<User> userManager, 
@@ -19,7 +18,6 @@ public class AuthenticationService : IAuthenticationService
         IJwtService jwtService)
     {
         _userManager = userManager;
-        _dbContext = dbContext;
         _jwtService = jwtService;
     }
     
