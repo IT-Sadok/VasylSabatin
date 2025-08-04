@@ -7,6 +7,8 @@ using MyWebApp.Options;
 using System.Text;
 using MyWebApp.Interfaces;
 using MyWebApp.Models;
+using MyWebApp.Repositories;
+using MyWebApp.Repositories.Interfaces;
 using MyWebApp.Services;
 using MyWebApp.Services.Interfaces;
 
@@ -25,6 +27,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+        services.AddScoped<IWorkoutService, WorkoutService>();
+        
 
         services.AddDbContext<ApplicationContext>(options =>
             options.UseNpgsql(config.GetConnectionString("Database")));

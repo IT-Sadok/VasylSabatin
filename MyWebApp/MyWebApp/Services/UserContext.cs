@@ -14,7 +14,7 @@ public class UserContext : IUserContext
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public RequesterContextModel GetRequesterContext()
+    public RequesterContextModel GetUserContext()
     {
         var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                           ?? throw new InvalidTokenException();
