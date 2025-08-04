@@ -20,5 +20,6 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapWorkoutEndpoints();
 
 app.Run();
