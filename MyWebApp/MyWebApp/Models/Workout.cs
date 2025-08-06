@@ -11,7 +11,7 @@ public class Workout
 
     public string Title { get; set; } = null!;
     public DateTime DateOfTraining { get; set; }
-    public int DurationMinutes { get; set; }
+    public TimeSpan DurationMinutes { get; set; }
     public string? Notes { get; set; }
 
 

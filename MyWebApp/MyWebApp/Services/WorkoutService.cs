@@ -18,7 +18,7 @@ public class WorkoutService : IWorkoutService
         _workoutRepository = workoutRepository; 
     }
 
-    public async Task CreateWorkoutAsync(WorkoutModel model)
+    public async Task CreateWorkoutAsync(WorkoutModel model, CancellationToken token)
     {
         var userId = _userContext.GetUserContext().UserId;
 
@@ -31,13 +31,13 @@ public class WorkoutService : IWorkoutService
             UserId = userId
         };
 
-        await _workoutRepository.CreateWorkoutAsync(workout);
+        await _workoutRepository.CreateWorkoutAsync(workout, token);
     }
 
-    public async Task<List<WorkoutModel>> GetAllWorkoutsAsync()
+    public async Task<List<WorkoutModel>> GetAllWorkoutsAsync(CancellationToken token)
     {
         var userId = _userContext.GetUserContext().UserId;
-        var workouts = await _workoutRepository.GetAllWorkoutsAsync(userId);
+        var workouts = await _workoutRepository.GetAllWorkoutsAsync(userId, token);
 
         return workouts.Select(w => new WorkoutModel
         {
@@ -48,10 +48,10 @@ public class WorkoutService : IWorkoutService
         }).ToList();
     }
 
-    public async Task UpdateWorkoutAsync(int id, WorkoutModel model)
+    public async Task UpdateWorkoutAsync(int id, WorkoutModel model, CancellationToken token)
     {
         var userId = _userContext.GetUserContext().UserId;
-        var workout = await _workoutRepository.GetWorkoutByIdAsync(id, userId);
+        var workout = await _workoutRepository.GetWorkoutByIdAsync(id, userId, token);
         if (workout == null)
             throw new WorkoutNotFoundException(id);
 
@@ -60,23 +60,23 @@ public class WorkoutService : IWorkoutService
         workout.DurationMinutes = model.DurationMinutes;
         workout.Notes = model.Notes;
         
-        await _workoutRepository.UpdateWorkoutAsync(workout);
+        await _workoutRepository.UpdateWorkoutAsync(workout, token);;
     }
     
-    public async Task DeleteWorkoutAsync(int id)
+    public async Task DeleteWorkoutAsync(int id, CancellationToken token)
     {
         var userId = _userContext.GetUserContext().UserId;
-        var workout = await _workoutRepository.GetWorkoutByIdAsync(id, userId);
+        var workout = await _workoutRepository.GetWorkoutByIdAsync(id, userId, token);
         if (workout == null)
             throw new WorkoutNotFoundException(id);
         
-        await _workoutRepository.DeleteWorkoutAsync(id, userId);
+        await _workoutRepository.DeleteWorkoutAsync(id, userId, token);
     }
     
-    public async Task<List<WorkoutModel>> SearchWorkoutsByKeywordAsync(string keyword)
+    public async Task<List<WorkoutModel>> SearchWorkoutsByKeywordAsync(string keyword, CancellationToken token)
     {
         var userId = _userContext.GetUserContext().UserId;
-        var workouts = await _workoutRepository.SearchWorkoutsByKeywordAsync(keyword, userId);
+        var workouts = await _workoutRepository.SearchWorkoutsByKeywordAsync(keyword, userId, token);;
         
         return workouts.Select(w => new WorkoutModel
         {
@@ -87,10 +87,10 @@ public class WorkoutService : IWorkoutService
         }).ToList();
     }
 
-    public async Task<List<WorkoutModel>> SortWorkoutsByDateAsync(WorkoutSortByDateModel model)
+    public async Task<List<WorkoutModel>> SortWorkoutsByDateAsync(WorkoutSortByDateModel model, CancellationToken token)
     {
         var userId = _userContext.GetUserContext().UserId;
-        var workouts = await _workoutRepository.SortWorkoutsByDateAsync(userId, model.Descending);
+        var workouts = await _workoutRepository.SortWorkoutsByDateAsync(userId, model.IsDescending, token);
         
         return workouts.Select(w => new WorkoutModel
         {
