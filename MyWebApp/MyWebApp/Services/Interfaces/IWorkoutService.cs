@@ -5,15 +5,15 @@ namespace MyWebApp.Services.Interfaces;
 
 public interface IWorkoutService
 {
-    Task CreateWorkoutAsync(WorkoutModel model);
+    Task CreateWorkoutAsync(WorkoutModel model, CancellationToken token);
 
-    Task<List<WorkoutModel>> GetAllWorkoutsAsync();
+    Task<List<WorkoutModel>> GetAllWorkoutsAsync(CancellationToken token);
 
-    Task UpdateWorkoutAsync(int id, WorkoutModel model);
+    Task UpdateWorkoutAsync(int id, WorkoutModel model, CancellationToken token);
 
-    Task DeleteWorkoutAsync(int id);
+    Task DeleteWorkoutAsync(int id, CancellationToken token);
 
-    Task<List<WorkoutModel>> SearchWorkoutsByKeywordAsync(string keyword);
+    Task<List<WorkoutModel>> SearchWorkoutsByKeywordAsync(string keyword, CancellationToken token);
 
-    Task<List<WorkoutModel>> SortWorkoutsByDateAsync(WorkoutSortByDateModel model);
+    Task<List<WorkoutModel>> SortWorkoutsByDateAsync(WorkoutSortByDateModel model, CancellationToken token);
 }

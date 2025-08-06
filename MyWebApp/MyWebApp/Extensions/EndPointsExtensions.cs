@@ -49,38 +49,44 @@ public static class EndPointsExtensions
     {
         app.MapPost(WorkoutRoutes.Create, async (
                 [FromServices] IWorkoutService workoutService,
-                [FromBody] WorkoutModel model)
-            => await workoutService.CreateWorkoutAsync(model))
+                [FromBody] WorkoutModel model,
+                    CancellationToken token)
+            => await workoutService.CreateWorkoutAsync(model, token))
             .RequireAuthorization();
 
         app.MapGet(WorkoutRoutes.GetAll, async (
-                [FromServices] IWorkoutService workoutService)
-            => await workoutService.GetAllWorkoutsAsync())
+                [FromServices] IWorkoutService workoutService,
+                CancellationToken token)
+            => await workoutService.GetAllWorkoutsAsync(token))
             .RequireAuthorization();
 
         app.MapPut(WorkoutRoutes.Update, async (
                 [FromServices] IWorkoutService workoutService,
                 [FromRoute] int id,
-                [FromBody] WorkoutModel model)
-            => await workoutService.UpdateWorkoutAsync(id, model))
+                [FromBody] WorkoutModel model,
+                CancellationToken token)
+            => await workoutService.UpdateWorkoutAsync(id, model, token))
             .RequireAuthorization();
 
         app.MapDelete(WorkoutRoutes.Delete, async (
                 [FromServices] IWorkoutService workoutService,
-                [FromRoute] int id)
-            => await workoutService.DeleteWorkoutAsync(id))
+                [FromRoute] int id,
+                CancellationToken token)
+            => await workoutService.DeleteWorkoutAsync(id, token))
             .RequireAuthorization();
 
         app.MapGet(WorkoutRoutes.Search, async (
                 [FromServices] IWorkoutService workoutService,
-                [FromQuery] string keyword)
-            => await workoutService.SearchWorkoutsByKeywordAsync(keyword))
+                [FromQuery] string keyword,
+                CancellationToken token)
+            => await workoutService.SearchWorkoutsByKeywordAsync(keyword, token))
             .RequireAuthorization();
 
         app.MapPost(WorkoutRoutes.Sort, async (
                 [FromServices] IWorkoutService workoutService,
-                [FromBody] WorkoutSortByDateModel model)
-            => await workoutService.SortWorkoutsByDateAsync(model))
+                [FromBody] WorkoutSortByDateModel model,
+                CancellationToken token)
+            => await workoutService.SortWorkoutsByDateAsync(model, token))
             .RequireAuthorization();
 
         return app;
