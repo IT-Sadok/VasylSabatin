@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyWebApp.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20250728142126_Init")]
+    [Migration("20250804120555_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -356,9 +356,16 @@ namespace MyWebApp.Migrations
                     b.Property<DateTime>("DateOfTraining")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");

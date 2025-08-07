@@ -5,5 +5,5 @@ using System.Security.Claims;
 
 public interface IUserContext
 {
-    RequesterContextModel GetRequesterContext();
+    public int UserId { get; }
 }
