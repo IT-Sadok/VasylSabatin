@@ -14,11 +14,15 @@ public class WorkoutRepository : IWorkoutRepository
     {
         _dbContext = dbContext;
     }
-    
+
+    public Task SaveChangesAsync(CancellationToken token)
+    {
+        return _dbContext.SaveChangesAsync(token);
+    }
+
     public async Task CreateWorkoutAsync(Workout workout, CancellationToken token)
     {
         await _dbContext.Workouts.AddAsync(workout, token);
-        await _dbContext.SaveChangesAsync(token);
     }
 
     public async Task<List<Workout>> GetAllWorkoutsAsync(int userId, CancellationToken token)
@@ -36,16 +40,16 @@ public class WorkoutRepository : IWorkoutRepository
             .FirstOrDefaultAsync(w => w.Id == workoutId && w.UserId == userId, token);
     }
 
-    public async Task UpdateWorkoutAsync(Workout workout, CancellationToken token)
+    public Task UpdateWorkoutAsync(Workout workout, CancellationToken token)
     {
         _dbContext.Workouts.Update(workout);
-        await _dbContext.SaveChangesAsync(token);
+        return Task.CompletedTask;
     }
 
     public async Task DeleteWorkoutAsync(int workoutId, int userId, CancellationToken token)
     {
         var workout = await _dbContext.Workouts
-            .FirstOrDefaultAsync(w => w.Id == workoutId && w.UserId == userId, token);;
+            .FirstOrDefaultAsync(w => w.Id == workoutId && w.UserId == userId, token);
 
         if (workout == null)
         {
@@ -53,7 +57,6 @@ public class WorkoutRepository : IWorkoutRepository
         }
         
         _dbContext.Workouts.Remove(workout);
-        await _dbContext.SaveChangesAsync(token);
     }
 
     public async Task<List<Workout>> SearchWorkoutsByKeywordAsync(string keyword, int userId, CancellationToken token)

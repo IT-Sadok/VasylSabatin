@@ -17,4 +17,5 @@ public interface IWorkoutRepository
     Task<List<Workout>> SearchWorkoutsByKeywordAsync(string keyword, int userId, CancellationToken token);
 
     Task<List<Workout>> SortWorkoutsByDateAsync(int userId, bool descending, CancellationToken token);
+    Task SaveChangesAsync(CancellationToken token);
 }

@@ -1,12 +1,8 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using MyWebApp.Data;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Interfaces;
 using MyWebApp.Models;
-using Microsoft.EntityFrameworkCore;
-using MyWebApp.Services;
 using MyWebApp.Services.Interfaces;
 
 namespace MyWebApp;
@@ -26,15 +22,9 @@ public class UserService : IUserService
 
     public async Task<UserProfileModel> GetUserProfileAsync()
     {
-        var userContext = _userContext.GetUserContext();
-        var userId = userContext.UserId.ToString();
+        var userId = _userContext.UserId.ToString();
         var user = await _userManager.FindByIdAsync(userId);
-
-        if (userId == null)
-        {
-            throw new InvalidTokenException();
-        }
-
+        
         if (user == null)
         {
             throw new UserNotFoundException();
@@ -52,15 +42,9 @@ public class UserService : IUserService
 
     public async Task UpdateUserProfileAsync(UserUpdateModel dto)
     {
-        var userContext = _userContext.GetUserContext();
-        var userId = userContext.UserId.ToString();
-
-        if (userId == null)
-        {
-            throw new InvalidTokenException();
-        }
+        var userId = _userContext.UserId.ToString();
         
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await _userManager.FindByIdAsync(userId);
 
         if (user == null)
         {
@@ -83,8 +67,8 @@ public class UserService : IUserService
 
     public async Task DeleteUserProfileAsync()
     {
-        var userId = _userContext.GetUserContext();
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var userId = _userContext.UserId.ToString();
+        var user = await _userManager.FindByIdAsync(userId);
         
         if (user == null)
         {

@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Services.Interfaces;
 
@@ -14,17 +13,17 @@ public class UserContext : IUserContext
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public RequesterContextModel GetUserContext()
-    {
-        var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                          ?? throw new InvalidTokenException();
-        
-        if (!int.TryParse(userIdClaim, out var userId))
-            throw new InvalidTokenException();
-
-        return new RequesterContextModel
+    public int UserId {
+        get
         {
-            UserId = userId
-        };
+            var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                              ?? throw new InvalidTokenException();
+        
+            if (!int.TryParse(userIdClaim, out var userId))
+                throw new InvalidTokenException();
+            
+            return userId;
+        }
     }
-}
+
+}    
