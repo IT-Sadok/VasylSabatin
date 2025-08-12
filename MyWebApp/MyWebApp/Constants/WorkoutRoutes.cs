@@ -4,7 +4,9 @@ public class WorkoutRoutes
 {
     public const string Base = "api/workouts";
     
-    public const string ById = Base + "/{id:int}";
+    public const string ById = "/{id:int}";
     
-    public const string Sort = Base + "/sorted";
+    public const string Search = "/search";
+    
+    public const string Sorted = "/sorted";
 }

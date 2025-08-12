@@ -27,6 +27,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IExerciseRepository, ExerciseRepository>();
+        services.AddScoped<IExerciseService, ExerciseService>();
+        services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
+        services.AddScoped<IWorkoutExerciseService, WorkoutExerciseService>();
         services.AddScoped<IWorkoutRepository, WorkoutRepository>();
         services.AddScoped<IWorkoutService, WorkoutService>();
         

@@ -41,6 +41,7 @@ public class WorkoutService : IWorkoutService
 
         return workouts.Select(w => new WorkoutModel
         {
+            Id = w.Id,
             Title = w.Title,
             DateOfTraining = w.DateOfTraining,
             DurationMinutes = w.DurationMinutes,
@@ -82,6 +83,7 @@ public class WorkoutService : IWorkoutService
         
         return workouts.Select(w => new WorkoutModel
         {
+            Id = w.Id,
             Title = w.Title,
             DateOfTraining = w.DateOfTraining,
             DurationMinutes = w.DurationMinutes,
@@ -96,6 +98,7 @@ public class WorkoutService : IWorkoutService
         
         return workouts.Select(w => new WorkoutModel
         {
+            Id = w.Id,
             Title = w.Title,
             DateOfTraining = w.DateOfTraining,
             DurationMinutes = w.DurationMinutes,
