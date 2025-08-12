@@ -8,6 +8,9 @@ public class WorkoutExerciseConfiguration : IEntityTypeConfiguration<WorkoutExer
     public void Configure(EntityTypeBuilder<WorkoutExercise> builder)
     {
         builder.HasKey(we => we.Id);
+
+        builder.HasIndex(we => new { we.WorkoutId, we.ExerciseId })
+            .IsUnique();
         
         builder.Property(we => we.Sets)
             .IsRequired();
@@ -16,7 +19,8 @@ public class WorkoutExerciseConfiguration : IEntityTypeConfiguration<WorkoutExer
             .IsRequired();
         
         builder.Property(we => we.Weight)
-            .IsRequired();
+            .IsRequired(false)
+            .HasPrecision(5, 2);
         
         builder.HasOne(we => we.Workout)
             .WithMany(w => w.WorkoutExercises)
