@@ -2,8 +2,8 @@ namespace MyWebApp.DTO.Exceptions;
 
 public class WeightValidationException : Exception
 {
-    public WeightValidationException()
-        : base("Weight must be  >= 0.")
+    public WeightValidationException(double providedWeight)
+        : base($"Invalid number of sets entered: {providedWeight}. Enter a number >= 0.")
     {
     }
 }

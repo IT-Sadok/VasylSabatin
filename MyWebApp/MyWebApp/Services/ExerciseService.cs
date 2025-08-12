@@ -32,7 +32,7 @@ public class ExerciseService : IExerciseService
         await _exerciseRepository.SaveChangesAsync(token);
     }
     
-    public async Task<List<ExerciseModel>> GetAllExercisesAsync(CancellationToken token)
+    public async Task<IEnumerable<ExerciseModel>> GetAllExercisesAsync(CancellationToken token)
     {
         var exercises = await _exerciseRepository.GetAllExercisesAsync(token);
         
@@ -61,9 +61,9 @@ public class ExerciseService : IExerciseService
         };
     }
 
-    public async Task<List<ExerciseModel>> GetExercisesByCategoryAsync(string category, CancellationToken token)
+    public async Task<IEnumerable<ExerciseModel>> GetExercisesByCategoryAsync(string category, CancellationToken token)
     {
-        var exercises = await _exerciseRepository.GetExercicesByCategoryAsync(category, token);
+        var exercises = await _exerciseRepository.GetExercisesByCategoryAsync(category, token);
         
         return exercises.Select(e => new ExerciseModel
         {

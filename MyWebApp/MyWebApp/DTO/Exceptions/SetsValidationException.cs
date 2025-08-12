@@ -2,8 +2,8 @@ namespace MyWebApp.DTO.Exceptions;
 
 public class SetsValidationException : Exception
 {
-    public SetsValidationException()
-        : base("Reps must be  >= 1.")
+    public SetsValidationException(int providedSets)
+        : base($"Invalid number of sets entered: {providedSets}. Enter a number >= 1.")
     {
     }
 }

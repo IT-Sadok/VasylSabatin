@@ -10,7 +10,7 @@ public interface IWorkoutExerciseRepository
 
     Task<WorkoutExercise?> GetAsync(int workoutId, int exerciseId, CancellationToken token);
 
-    Task<List<WorkoutExercise>> GetByWorkoutIdAsync(int workoutId, CancellationToken token);
+    Task<IEnumerable<WorkoutExercise>> GetByWorkoutIdAsync(int workoutId, CancellationToken token);
     
     Task CreateAsync(WorkoutExercise workoutExercise, CancellationToken token);
 

@@ -25,7 +25,7 @@ public class WorkoutRepository : IWorkoutRepository
         await _dbContext.Workouts.AddAsync(workout, token);
     }
 
-    public async Task<List<Workout>> GetAllWorkoutsAsync(int userId, CancellationToken token)
+    public async Task<IEnumerable<Workout>> GetAllWorkoutsAsync(int userId, CancellationToken token)
     {
         return await _dbContext.Workouts
             .Where(w => w.UserId == userId)
@@ -59,7 +59,7 @@ public class WorkoutRepository : IWorkoutRepository
         _dbContext.Workouts.Remove(workout);
     }
 
-    public async Task<List<Workout>> SearchWorkoutsByKeywordAsync(string keyword, int userId, CancellationToken token)
+    public async Task<IEnumerable<Workout>> SearchWorkoutsByKeywordAsync(string keyword, int userId, CancellationToken token)
     {
         return await  _dbContext.Workouts
             .Where(w => w.UserId == userId && w.Title.ToLower().Contains(keyword.ToLower()))
@@ -67,7 +67,7 @@ public class WorkoutRepository : IWorkoutRepository
             .ToListAsync(token);
     }
 
-    public async Task<List<Workout>> SortWorkoutsByDateAsync(int userId, bool descending,
+    public async Task<IEnumerable<Workout>> SortWorkoutsByDateAsync(int userId, bool descending,
         CancellationToken token)
     {
         var query = _dbContext.Workouts

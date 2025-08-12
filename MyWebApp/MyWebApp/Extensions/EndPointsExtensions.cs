@@ -66,7 +66,7 @@ public static class EndPointsExtensions
                        .RequireAuthorization()
                        .WithTags("Workouts");
         
-        group.MapPost("", (IWorkoutService workoutService, 
+        group.MapPost(string.Empty, (IWorkoutService workoutService, 
                     WorkoutModel model, 
                     CancellationToken token) =>
                 workoutService.CreateWorkoutAsync(model, token))
@@ -74,7 +74,7 @@ public static class EndPointsExtensions
             .WithSummary("Create a workout")
             .WithDescription("Creates a new workout for the current user.");
         
-        group.MapGet("", (IWorkoutService workoutService, 
+        group.MapGet(string.Empty, (IWorkoutService workoutService, 
                     CancellationToken token) =>
                 workoutService.GetAllWorkoutsAsync(token))
             .WithName("ListWorkouts")
@@ -124,7 +124,7 @@ public static class EndPointsExtensions
             .WithTags("Exercises")
             .RequireAuthorization();
 
-        group.MapPost("", (IExerciseService exerciseService, 
+        group.MapPost(string.Empty, (IExerciseService exerciseService, 
                     ExerciseModel model, 
                     CancellationToken token) =>
                 exerciseService.CreateExerciseAsync(model, token))
@@ -132,7 +132,7 @@ public static class EndPointsExtensions
             .WithSummary("Create a new exercise")
             .WithDescription("Creates a new exercise for the current user.");
 
-        group.MapGet("", (IExerciseService exerciseService, 
+        group.MapGet(string.Empty, (IExerciseService exerciseService, 
                     CancellationToken token) =>
                 exerciseService.GetAllExercisesAsync(token))
             .WithName("ListExercises")
@@ -165,19 +165,19 @@ public static class EndPointsExtensions
             .WithTags("WorkoutExercises")
             .RequireAuthorization();
 
-        group.MapPost("", (int workoutId, 
+        group.MapPost(string.Empty, (int workoutId, 
                 WorkoutExerciseModel model, 
                 IWorkoutExerciseService workoutExerciseService, 
                 CancellationToken token) =>
             {
                 model.WorkoutId = workoutId;
-                return workoutExerciseService.AddExerciseToWorkoutAsync(model, token);
+                return workoutExerciseService.CreateWorkoutExerciseAsync(model, token);
             })
             .WithName("AddExerciseToWorkout")
             .WithSummary("Add exercise to workout")
             .WithDescription("Adds an exercise to the specified workout with sets/reps/weight.");
 
-        group.MapGet("", (int workoutId, 
+        group.MapGet(string.Empty, (int workoutId, 
                     IWorkoutExerciseService workoutExerciseService, 
                     CancellationToken token) =>
                 workoutExerciseService.GetExercisesForWorkoutAsync(workoutId, token))

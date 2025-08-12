@@ -29,13 +29,15 @@ public sealed class WorkoutExerciseRepository : IWorkoutExerciseRepository
     public async Task<WorkoutExercise?> GetAsync(int workoutId, int exerciseId, CancellationToken token)
     {
         return await _context.WorkoutExercises
+            .AsNoTracking()
             .Include(we => we.Exercise)
             .FirstOrDefaultAsync(we => we.WorkoutId == workoutId && we.ExerciseId == exerciseId, token);
     }
 
-    public async Task<List<WorkoutExercise>> GetByWorkoutIdAsync(int workoutId, CancellationToken token)
+    public async Task<IEnumerable<WorkoutExercise>> GetByWorkoutIdAsync(int workoutId, CancellationToken token)
     {
         return await _context.WorkoutExercises
+            .AsNoTracking()
             .Include(e => e.Exercise)
             .Where(we => we.WorkoutId == workoutId)
             .OrderBy(w => w.ExerciseId)

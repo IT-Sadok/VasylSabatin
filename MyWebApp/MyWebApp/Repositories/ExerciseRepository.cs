@@ -31,12 +31,12 @@ public class ExerciseRepository : IExerciseRepository
             .FirstOrDefaultAsync(e => e.Id == id, token);
     }
 
-    public async Task<List<Exercise>> GetAllExercisesAsync(CancellationToken token)
+    public async Task<IEnumerable<Exercise>> GetAllExercisesAsync(CancellationToken token)
     {
         return await _dbContext.Exercises.ToListAsync(token);
     }
 
-    public async Task<List<Exercise>> GetExercicesByCategoryAsync(string category, CancellationToken token)
+    public async Task<IEnumerable<Exercise>> GetExercisesByCategoryAsync(string category, CancellationToken token)
     {
         return await _dbContext.Exercises
             .Where(e => e.Category.ToLower() == category.ToLower())

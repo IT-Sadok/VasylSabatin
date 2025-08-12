@@ -1,5 +1,7 @@
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
+using MyWebApp.Guards;
+using MyWebApp.Mapper;
 using MyWebApp.Models;
 using MyWebApp.Repositories.Interfaces;
 using MyWebApp.Services.Interfaces;
@@ -21,11 +23,9 @@ public class WorkoutExerciseService : IWorkoutExerciseService
         _workoutExerciseRepository = workoutExerciseRepository;
     }
 
-    public async Task<WorkoutExerciseModel> AddExerciseToWorkoutAsync(WorkoutExerciseModel model, CancellationToken token)
+    public async Task<WorkoutExerciseModel> CreateWorkoutExerciseAsync(WorkoutExerciseModel model, CancellationToken token)
     {
-        if (model.Sets < 1) throw new SetsValidationException();
-        if (model.Reps < 1) throw new RepsValidationException();
-        if (model.Weight is < 0) throw new WeightValidationException();
+        WorkoutExerciseValidator.Validate(model);
         
         var workout = await _workoutRepository.GetWorkoutByIdAsync(model.WorkoutId, _userContext.UserId, token);
         if (workout is null)
@@ -40,30 +40,15 @@ public class WorkoutExerciseService : IWorkoutExerciseService
         if (exists)
             throw new WorkoutExerciseConflictException(model.WorkoutId, model.ExerciseId);
 
-        var link = new WorkoutExercise
-        {
-            WorkoutId = model.WorkoutId,
-            ExerciseId = model.ExerciseId,
-            Sets = model.Sets,
-            Reps = model.Reps,
-            Weight = model.Weight
-        };
+        var link = model.ToEntity();
         
         await _workoutExerciseRepository.CreateAsync(link, token);
         await _workoutExerciseRepository.SaveChangesAsync(token);
 
-        return new WorkoutExerciseModel
-        {
-            WorkoutId = link.WorkoutId,
-            ExerciseId = link.ExerciseId,
-            ExerciseName = exercise.Name,
-            Sets = link.Sets,
-            Reps = link.Reps,
-            Weight = link.Weight
-        };
+        return link.ToModel();
     }
 
-    public async Task<List<WorkoutExerciseModel>> GetExercisesForWorkoutAsync(int workoutId, CancellationToken token)
+    public async Task<IEnumerable<WorkoutExerciseModel>> GetExercisesForWorkoutAsync(int workoutId, CancellationToken token)
     {
         var userId = _userContext.UserId;
         var workout = await _workoutRepository.GetWorkoutByIdAsync(workoutId, userId, token);
@@ -72,15 +57,7 @@ public class WorkoutExerciseService : IWorkoutExerciseService
         
         var items = await _workoutExerciseRepository.GetByWorkoutIdAsync(workoutId, token);
         
-        return items.Select(x => new WorkoutExerciseModel
-        {
-            ExerciseId = x.ExerciseId,
-            ExerciseName = x.Exercise?.Name ?? string.Empty,
-            Sets = x.Sets,
-            Reps = x.Reps,
-            Weight = x.Weight
-        })
-        .ToList();
+        return items.ToModels();
     }
 
     public async Task<WorkoutExerciseModel> UpdateWorkoutExerciseAsync(WorkoutExerciseModel model, CancellationToken token)
@@ -93,25 +70,14 @@ public class WorkoutExerciseService : IWorkoutExerciseService
         if (workout is null)
             throw new WorkoutNotFoundException(model.WorkoutId);
         
-        if (model.Sets < 1) throw new SetsValidationException();
-        if (model.Reps < 1) throw new RepsValidationException();
-        if (model.Weight is < 0) throw new WeightValidationException();
+        WorkoutExerciseValidator.Validate(model);
         
-        link.Sets   = model.Sets;
-        link.Reps   = model.Reps;
-        link.Weight = model.Weight;
+        model.ApplyTo(link);
         
         _workoutExerciseRepository.Update(link);
         await _workoutExerciseRepository.SaveChangesAsync(token);
         
-        return new WorkoutExerciseModel
-        {
-            WorkoutId = link.WorkoutId,
-            ExerciseId = link.ExerciseId,
-            Sets = link.Sets,
-            Reps = link.Reps,
-            Weight = link.Weight
-        };
+        return link.ToModel();
     }
     
     public async Task DeleteWorkoutExerciseAsync(int workoutId, int exerciseId, CancellationToken token)

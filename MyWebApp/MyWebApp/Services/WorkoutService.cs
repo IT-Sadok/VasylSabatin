@@ -34,7 +34,7 @@ public class WorkoutService : IWorkoutService
         await _workoutRepository.SaveChangesAsync(token);
     }
 
-    public async Task<List<WorkoutModel>> GetAllWorkoutsAsync(CancellationToken token)
+    public async Task<IEnumerable<WorkoutModel>> GetAllWorkoutsAsync(CancellationToken token)
     {
         var userId = _userContext.UserId;
         var workouts = await _workoutRepository.GetAllWorkoutsAsync(userId, token);
@@ -76,7 +76,7 @@ public class WorkoutService : IWorkoutService
         await _workoutRepository.SaveChangesAsync(token);
     }
     
-    public async Task<List<WorkoutModel>> SearchWorkoutsByKeywordAsync(string keyword, CancellationToken token)
+    public async Task<IEnumerable<WorkoutModel>> SearchWorkoutsByKeywordAsync(string keyword, CancellationToken token)
     {
         var userId = _userContext.UserId;
         var workouts = await _workoutRepository.SearchWorkoutsByKeywordAsync(keyword, userId, token);
@@ -91,7 +91,7 @@ public class WorkoutService : IWorkoutService
         }).ToList();
     }
 
-    public async Task<List<WorkoutModel>> SortWorkoutsByDateAsync(WorkoutSortByDateModel model, CancellationToken token)
+    public async Task<IEnumerable<WorkoutModel>> SortWorkoutsByDateAsync(WorkoutSortByDateModel model, CancellationToken token)
     {
         var userId = _userContext.UserId;
         var workouts = await _workoutRepository.SortWorkoutsByDateAsync(userId, model.IsDescending, token);
