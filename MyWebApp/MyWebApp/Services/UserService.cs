@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Interfaces;
+using MyWebApp.Mapper;
 using MyWebApp.Models;
 using MyWebApp.Services.Interfaces;
 
@@ -30,17 +31,10 @@ public class UserService : IUserService
             throw new UserNotFoundException();
         }
 
-        return new UserProfileModel
-        {
-            FullName = user.FullName,
-            Age = user.Age,
-            Weight = user.Weight,
-            Email = user.Email,
-            AccountDescription = user.AccountDescription
-        };
+        return user.ToModel();
     }
 
-    public async Task UpdateUserProfileAsync(UserUpdateModel dto)
+    public async Task UpdateUserProfileAsync(UserUpdateModel model)
     {
         var userId = _userContext.UserId.ToString();
         
@@ -51,10 +45,7 @@ public class UserService : IUserService
             throw new UserNotFoundException();
         }
         
-        user.FullName = dto.FullName;
-        user.Age = dto.Age;
-        user.Weight = dto.Weight;
-        user.AccountDescription = dto.AccountDescription;
+        model.ApplyTo(user);
 
         var result = await _userManager.UpdateAsync(user);
 
@@ -80,7 +71,7 @@ public class UserService : IUserService
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
-            throw new UserUpdateFailedException(errors);
+            throw new UserDeleteFailedException(errors);
         }
     }
 }

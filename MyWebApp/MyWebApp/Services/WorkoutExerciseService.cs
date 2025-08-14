@@ -1,3 +1,4 @@
+using FluentValidation;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Guards;
@@ -14,18 +15,24 @@ public class WorkoutExerciseService : IWorkoutExerciseService
     private readonly IWorkoutRepository _workoutRepository;
     private readonly IExerciseRepository _exerciseRepository;
     private readonly IWorkoutExerciseRepository _workoutExerciseRepository;
+    private readonly IValidator<WorkoutExerciseModel> _validator;
 
-    public WorkoutExerciseService(IUserContext userContext, IWorkoutRepository workoutRepository, IExerciseRepository exerciseRepository, IWorkoutExerciseRepository workoutExerciseRepository)
+    public WorkoutExerciseService(IUserContext userContext,
+        IWorkoutRepository workoutRepository,
+        IExerciseRepository exerciseRepository,
+        IWorkoutExerciseRepository workoutExerciseRepository,
+        IValidator<WorkoutExerciseModel> validator)
     {
         _userContext = userContext;
         _workoutRepository = workoutRepository;
         _exerciseRepository = exerciseRepository;
         _workoutExerciseRepository = workoutExerciseRepository;
+        _validator = validator;
     }
 
     public async Task<WorkoutExerciseModel> CreateWorkoutExerciseAsync(WorkoutExerciseModel model, CancellationToken token)
     {
-        WorkoutExerciseValidator.Validate(model);
+        await _validator.ValidateAndThrowAsync(model, token);
         
         var workout = await _workoutRepository.GetWorkoutByIdAsync(model.WorkoutId, _userContext.UserId, token);
         if (workout is null)
@@ -70,7 +77,7 @@ public class WorkoutExerciseService : IWorkoutExerciseService
         if (workout is null)
             throw new WorkoutNotFoundException(model.WorkoutId);
         
-        WorkoutExerciseValidator.Validate(model);
+        await _validator.ValidateAndThrowAsync(model, token);
         
         model.ApplyTo(link);
         

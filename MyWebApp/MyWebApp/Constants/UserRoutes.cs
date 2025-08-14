@@ -1,8 +1,8 @@
 namespace MyWebApp.Constants;
 
-public class UserRoutes
+public static class UserRoutes
 {
-    public const string Base = "api/users";
+    public const string Base = $"{ApiRoutes.Prefix}/users";
     
     public const string Profile = "/profile";
     

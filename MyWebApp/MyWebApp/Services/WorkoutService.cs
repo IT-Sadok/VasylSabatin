@@ -1,5 +1,6 @@
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
+using MyWebApp.Mapper;
 using MyWebApp.Models;
 using MyWebApp.Repositories.Interfaces;
 using MyWebApp.Services.Interfaces;
@@ -20,17 +21,9 @@ public class WorkoutService : IWorkoutService
     public async Task CreateWorkoutAsync(WorkoutModel model, CancellationToken token)
     {
         var userId = _userContext.UserId;
-
-        var workout = new Workout
-        {
-            Title = model.Title,
-            DateOfTraining = model.DateOfTraining,
-            DurationMinutes = model.DurationMinutes,
-            Notes = model.Notes,
-            UserId = userId
-        };
-
-        await _workoutRepository.CreateWorkoutAsync(workout, token);
+        var entity= model.ToEntity(userId);
+        
+        await _workoutRepository.CreateWorkoutAsync(entity, token);
         await _workoutRepository.SaveChangesAsync(token);
     }
 
@@ -39,14 +32,7 @@ public class WorkoutService : IWorkoutService
         var userId = _userContext.UserId;
         var workouts = await _workoutRepository.GetAllWorkoutsAsync(userId, token);
 
-        return workouts.Select(w => new WorkoutModel
-        {
-            Id = w.Id,
-            Title = w.Title,
-            DateOfTraining = w.DateOfTraining,
-            DurationMinutes = w.DurationMinutes,
-            Notes = w.Notes
-        }).ToList();
+        return workouts.ToModels();
     }
 
     public async Task UpdateWorkoutAsync(int id, WorkoutModel model, CancellationToken token)
@@ -56,10 +42,7 @@ public class WorkoutService : IWorkoutService
         if (workout == null)
             throw new WorkoutNotFoundException(id);
 
-        workout.Title = model.Title;
-        workout.DateOfTraining = model.DateOfTraining;
-        workout.DurationMinutes = model.DurationMinutes;
-        workout.Notes = model.Notes;
+        model.ApplyTo(workout);
         
         await _workoutRepository.UpdateWorkoutAsync(workout, token);
         await _workoutRepository.SaveChangesAsync(token);
@@ -81,14 +64,7 @@ public class WorkoutService : IWorkoutService
         var userId = _userContext.UserId;
         var workouts = await _workoutRepository.SearchWorkoutsByKeywordAsync(keyword, userId, token);
         
-        return workouts.Select(w => new WorkoutModel
-        {
-            Id = w.Id,
-            Title = w.Title,
-            DateOfTraining = w.DateOfTraining,
-            DurationMinutes = w.DurationMinutes,
-            Notes = w.Notes
-        }).ToList();
+        return workouts.ToModels();
     }
 
     public async Task<IEnumerable<WorkoutModel>> SortWorkoutsByDateAsync(WorkoutSortByDateModel model, CancellationToken token)
@@ -96,13 +72,6 @@ public class WorkoutService : IWorkoutService
         var userId = _userContext.UserId;
         var workouts = await _workoutRepository.SortWorkoutsByDateAsync(userId, model.IsDescending, token);
         
-        return workouts.Select(w => new WorkoutModel
-        {
-            Id = w.Id,
-            Title = w.Title,
-            DateOfTraining = w.DateOfTraining,
-            DurationMinutes = w.DurationMinutes,
-            Notes = w.Notes
-        }).ToList();
+        return workouts.ToModels();
     }
 }    

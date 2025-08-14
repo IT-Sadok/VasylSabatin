@@ -1,7 +1,6 @@
-using System.Runtime.CompilerServices;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
-using MyWebApp.Models;
+using MyWebApp.Mapper;
 using MyWebApp.Repositories.Interfaces;
 using MyWebApp.Services.Interfaces;
 
@@ -9,24 +8,16 @@ namespace MyWebApp.Services;
 
 public class ExerciseService : IExerciseService
 {
-    private readonly IUserContext _userContext;
     private readonly IExerciseRepository _exerciseRepository;
 
-    public ExerciseService(IUserContext userContext, IExerciseRepository exerciseRepository)
+    public ExerciseService(IExerciseRepository exerciseRepository)
     {
-        _userContext = userContext;
         _exerciseRepository = exerciseRepository;
     }
 
     public async Task CreateExerciseAsync(ExerciseModel model, CancellationToken token)
     {
-        var exercise = new Exercise
-        {
-            Id = model.Id,
-            Name = model.Name,
-            Category = model.Category,
-            Description = model.Description
-        };
+        var exercise = model.ToEntity();
         
         await _exerciseRepository.CreateExerciseAsync(exercise, token);
         await _exerciseRepository.SaveChangesAsync(token);
@@ -35,14 +26,8 @@ public class ExerciseService : IExerciseService
     public async Task<IEnumerable<ExerciseModel>> GetAllExercisesAsync(CancellationToken token)
     {
         var exercises = await _exerciseRepository.GetAllExercisesAsync(token);
-        
-        return exercises.Select(e => new ExerciseModel
-        {
-            Id = e.Id,
-            Name = e.Name,
-            Category = e.Category,
-            Description = e.Description
-        }).ToList();
+
+        return exercises.ToModels();
     }
 
     public async Task<ExerciseModel> GetExerciseByIdAsync(int exerciseId,CancellationToken token)
@@ -52,26 +37,18 @@ public class ExerciseService : IExerciseService
         if (exercise == null)
             throw new ExerciseNotFoundException(exerciseId);
 
-        return new ExerciseModel
-        {
-            Id = exercise.Id,
-            Name = exercise.Name,
-            Category = exercise.Category,
-            Description = exercise.Description
-        };
+        return exercise.ToModel();   
     }
 
     public async Task<IEnumerable<ExerciseModel>> GetExercisesByCategoryAsync(string category, CancellationToken token)
     {
-        var exercises = await _exerciseRepository.GetExercisesByCategoryAsync(category, token);
-        
-        return exercises.Select(e => new ExerciseModel
-        {
-            Id = e.Id,
-            Name = e.Name,
-            Category = e.Category,
-            Description = e.Description
-        }).ToList();
+        if (string.IsNullOrWhiteSpace(category))
+            return [];
+
+        var normalized = category.Trim();
+        var exercises = await _exerciseRepository.GetExercisesByCategoryAsync(normalized, token);
+
+        return exercises.ToModels();
     }
 
     public async Task UpdateExerciseAsync(int exerciseId, ExerciseModel model, CancellationToken token)
@@ -81,9 +58,7 @@ public class ExerciseService : IExerciseService
         if (exercise == null)
             throw new ExerciseNotFoundException(exerciseId);
         
-        exercise.Name = model.Name;
-        exercise.Category = model.Category;
-        exercise.Description = model.Description;
+        model.ApplyTo(exercise);
         
         await _exerciseRepository.UpdateExerciseAsync(exercise, token);
         await _exerciseRepository.SaveChangesAsync(token);

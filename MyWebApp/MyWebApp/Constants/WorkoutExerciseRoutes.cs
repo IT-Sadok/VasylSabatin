@@ -1,8 +1,10 @@
 namespace MyWebApp.Constants;
 
-public class WorkoutExerciseRoutes
+public static class WorkoutExerciseRoutes
 {
-    public const string Base = "api/workouts/{workoutId:int}/exercises";
+    public const string Root = "";
     
-    public const string ById = "/{exerciseId:int}";
+    public const string Base = $"{ApiRoutes.Prefix}/workouts/{RouteParams.workoutId}/exercises";
+    
+    public const string ById =$"/{RouteParams.exerciseId}";
 }

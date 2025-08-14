@@ -66,7 +66,7 @@ public static class EndPointsExtensions
                        .RequireAuthorization()
                        .WithTags("Workouts");
         
-        group.MapPost(string.Empty, (IWorkoutService workoutService, 
+        group.MapPost(WorkoutRoutes.Root, (IWorkoutService workoutService, 
                     WorkoutModel model, 
                     CancellationToken token) =>
                 workoutService.CreateWorkoutAsync(model, token))
@@ -74,14 +74,14 @@ public static class EndPointsExtensions
             .WithSummary("Create a workout")
             .WithDescription("Creates a new workout for the current user.");
         
-        group.MapGet(string.Empty, (IWorkoutService workoutService, 
+        group.MapGet(WorkoutRoutes.Root, (IWorkoutService workoutService, 
                     CancellationToken token) =>
                 workoutService.GetAllWorkoutsAsync(token))
             .WithName("ListWorkouts")
             .WithSummary("List all workouts")
             .WithDescription("Returns all workouts of the current user.");
         
-        group.MapGet(WorkoutRoutes.Search, (IWorkoutService workoutService, 
+        group.MapGet(WorkoutRoutes.Base, (IWorkoutService workoutService, 
                     string keyword, 
                     CancellationToken token) =>
                 workoutService.SearchWorkoutsByKeywordAsync(keyword, token))
@@ -124,7 +124,7 @@ public static class EndPointsExtensions
             .WithTags("Exercises")
             .RequireAuthorization();
 
-        group.MapPost(string.Empty, (IExerciseService exerciseService, 
+        group.MapPost(ExerciseRoutes.Root, (IExerciseService exerciseService, 
                     ExerciseModel model, 
                     CancellationToken token) =>
                 exerciseService.CreateExerciseAsync(model, token))
@@ -132,7 +132,7 @@ public static class EndPointsExtensions
             .WithSummary("Create a new exercise")
             .WithDescription("Creates a new exercise for the current user.");
 
-        group.MapGet(string.Empty, (IExerciseService exerciseService, 
+        group.MapGet(ExerciseRoutes.Root, (IExerciseService exerciseService, 
                     CancellationToken token) =>
                 exerciseService.GetAllExercisesAsync(token))
             .WithName("ListExercises")
@@ -165,7 +165,7 @@ public static class EndPointsExtensions
             .WithTags("WorkoutExercises")
             .RequireAuthorization();
 
-        group.MapPost(string.Empty, (int workoutId, 
+        group.MapPost(WorkoutExerciseRoutes.Root, (int workoutId, 
                 WorkoutExerciseModel model, 
                 IWorkoutExerciseService workoutExerciseService, 
                 CancellationToken token) =>
@@ -177,7 +177,7 @@ public static class EndPointsExtensions
             .WithSummary("Add exercise to workout")
             .WithDescription("Adds an exercise to the specified workout with sets/reps/weight.");
 
-        group.MapGet(string.Empty, (int workoutId, 
+        group.MapGet(WorkoutExerciseRoutes.Root, (int workoutId, 
                     IWorkoutExerciseService workoutExerciseService, 
                     CancellationToken token) =>
                 workoutExerciseService.GetExercisesForWorkoutAsync(workoutId, token))

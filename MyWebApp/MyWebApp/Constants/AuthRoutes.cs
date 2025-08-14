@@ -1,8 +1,8 @@
 namespace MyWebApp.Constants;
 
-public class AuthRoutes
+public static class AuthRoutes
 {
-    public const string Base = "api/auth";
+    public const string Base = $"{ApiRoutes.Prefix}/auth";
     
     public const string SignUp = "/sign-up";
     

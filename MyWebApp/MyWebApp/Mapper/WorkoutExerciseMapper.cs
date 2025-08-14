@@ -23,7 +23,12 @@ public static class WorkoutExerciseMapper
     }
     
     public static IEnumerable<WorkoutExerciseModel> ToModels(this IEnumerable<WorkoutExercise> entities)
-        => entities.Select(ToModel);
+    {
+        if (entities == null)
+            throw new ArgumentNullException(nameof(entities));
+        
+        return entities.Select(ToModel);
+    }
 
     public static WorkoutExercise ToEntity(this WorkoutExerciseModel model) => new WorkoutExercise
     {
