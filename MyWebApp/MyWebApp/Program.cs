@@ -4,6 +4,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddProjectServices(builder.Configuration);
 builder.Services.AddSwaggerwithJwt();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.DocumentFilter<TagOrderDocumentFilter>();
+});
 
 var app = builder.Build();
 
@@ -14,12 +18,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
 app.MapWorkoutEndpoints();
+app.MapExerciseEndpoints();
+app.MapExerciseWorkoutEndpoints();
 
 app.Run();

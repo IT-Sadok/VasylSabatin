@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using MyWebApp.DTO;
 using MyWebApp.Interfaces;
 using MyWebApp.Constants;
@@ -11,85 +10,202 @@ public static class EndPointsExtensions
 {
     public static WebApplication MapAuthEndpoints(this WebApplication app)
     {
-        app.MapPost(AuthRoutes.SignUp, async (
-                [FromServices] IAuthenticationService authenticationService,
-                [FromBody] SignUpModel model)
-            => await authenticationService.RegisterUserAsync(model));
+        var group = app.MapGroup(AuthRoutes.Base)
+            .WithTags("Authentication")
+            .AllowAnonymous();  
+        
+        group.MapPost(AuthRoutes.SignUp, async (IAuthenticationService authenticationService,
+                    SignUpModel model) 
+                => await authenticationService.RegisterUserAsync(model))
+            .WithName("RegisterUser")
+            .WithSummary("Register user")
+            .WithDescription("Creates a new user account.");
 
-        app.MapPost(AuthRoutes.SignIn, async (
-                [FromServices] IAuthenticationService authenticationService,
-                [FromBody] SignInModel model)
-            => await authenticationService.LoginUserAsync(model));
+        group.MapPost(AuthRoutes.SignIn, async (IAuthenticationService authenticationService, 
+                    SignInModel model) 
+                => await authenticationService.LoginUserAsync(model))
+            .WithName("LoginUser")
+            .WithSummary("Login user")
+            .WithDescription("Authenticates a user and returns a JWT token.");
 
         return app;
     }
 
     public static WebApplication MapUserEndpoints(this WebApplication app)
     {
-        app.MapGet(UserRoutes.Profile, async (
-                [FromServices] IUserService userService)
-            => await userService.GetUserProfileAsync())
+        var group = app.MapGroup(UserRoutes.Base)
+            .WithTags("Users")
             .RequireAuthorization();
 
-        app.MapPut(UserRoutes.Update, async (
-                [FromServices] IUserService userService,
-                [FromBody] UserUpdateModel model)
-            => await userService.UpdateUserProfileAsync(model))
-            .RequireAuthorization();
+        group.MapGet(UserRoutes.Profile, (IUserService userService) =>
+                userService.GetUserProfileAsync())
+            .WithName("GetUserProfile")
+            .WithSummary("Get current user's profile")
+            .WithDescription("Returns the profile of the authenticated user.");
 
-        app.MapDelete(UserRoutes.Delete, async (
-                [FromServices] IUserService userService)
-            => await userService.DeleteUserProfileAsync())
-            .RequireAuthorization();
+        group.MapPut(UserRoutes.Update, (IUserService userService, 
+                    UserUpdateModel model) =>
+                userService.UpdateUserProfileAsync(model))
+            .WithName("UpdateUserProfile")
+            .WithSummary("Update current user's profile")
+            .WithDescription("Updates basic profile fields for the authenticated user.");
+
+        group.MapDelete(UserRoutes.Delete, (IUserService userService) =>
+                userService.DeleteUserProfileAsync())
+            .WithName("DeleteUserProfile")
+            .WithSummary("Delete current user's profile")
+            .WithDescription("Deletes the authenticated user's account.");
 
         return app;
     }
 
     public static WebApplication MapWorkoutEndpoints(this WebApplication app)
     {
-        app.MapPost(WorkoutRoutes.Base, async (
-                [FromServices] IWorkoutService workoutService,
-                [FromBody] WorkoutModel model,
-                    CancellationToken token)
-            => await workoutService.CreateWorkoutAsync(model, token))
+        var group = app.MapGroup(WorkoutRoutes.Base)
+                       .RequireAuthorization()
+                       .WithTags("Workouts");
+        
+        group.MapPost(ApiRoutes.Empty, (IWorkoutService workoutService, 
+                    WorkoutModel model, 
+                    CancellationToken token) =>
+                workoutService.CreateWorkoutAsync(model, token))
+            .WithName("CreateWorkout")
+            .WithSummary("Create a workout")
+            .WithDescription("Creates a new workout for the current user.");
+        
+        group.MapGet(ApiRoutes.Empty, (IWorkoutService workoutService, 
+                    CancellationToken token) =>
+                workoutService.GetAllWorkoutsAsync(token))
+            .WithName("ListWorkouts")
+            .WithSummary("List all workouts")
+            .WithDescription("Returns all workouts of the current user.");
+        
+        group.MapGet(WorkoutRoutes.Base, (IWorkoutService workoutService, 
+                    string keyword, 
+                    CancellationToken token) =>
+                workoutService.SearchWorkoutsByKeywordAsync(keyword, token))
+            .WithName("SearchWorkouts")
+            .WithSummary("Search workouts by keyword")
+            .WithDescription("Returns workouts that match the specified keyword.");
+
+        group.MapPost(WorkoutRoutes.Sorted, (IWorkoutService workoutService,
+                    WorkoutSortByDateModel model,
+                    CancellationToken token) =>
+                workoutService.SortWorkoutsByDateAsync(model, token))
+            .WithName("SortWorkoutsByDate")
+            .WithSummary("Sort workouts by date")
+            .WithDescription(
+                "Returns workouts sorted by date according to the provided criteria (ascending/descending).");
+
+        group.MapPut(WorkoutRoutes.ById, (IWorkoutService workoutService,
+                    int id,
+                    WorkoutModel model,
+                    CancellationToken token) =>
+                workoutService.UpdateWorkoutAsync(id, model, token))
+            .WithName("UpdateWorkout")
+            .WithSummary("Update a workout")
+            .WithDescription("Updates workout fields by id.");
+
+        group.MapDelete(WorkoutRoutes.ById, (IWorkoutService workoutService,
+                    int id,
+                    CancellationToken token) =>
+                workoutService.DeleteWorkoutAsync(id, token))
+            .WithName("DeleteWorkout")
+            .WithSummary("Delete a workout")
+            .WithDescription("Deletes a workout by id.");
+
+        return app;
+    }
+
+    public static WebApplication MapExerciseEndpoints(this WebApplication app)
+    {
+        var group = app.MapGroup(ExerciseRoutes.Base)
+            .WithTags("Exercises")
             .RequireAuthorization();
 
-        app.MapGet(WorkoutRoutes.Base, async (
-                [FromServices] IWorkoutService workoutService,
-                CancellationToken token)
-            => await workoutService.GetAllWorkoutsAsync(token))
+        group.MapPost(ApiRoutes.Empty, (IExerciseService exerciseService, 
+                    ExerciseModel model, 
+                    CancellationToken token) =>
+                exerciseService.CreateExerciseAsync(model, token))
+            .WithName("CreateExercise")
+            .WithSummary("Create a new exercise")
+            .WithDescription("Creates a new exercise for the current user.");
+
+        group.MapGet(ApiRoutes.Empty, (IExerciseService exerciseService, 
+                    CancellationToken token) =>
+                exerciseService.GetAllExercisesAsync(token))
+            .WithName("ListExercises")
+            .WithSummary("Get all exercises")
+            .WithDescription("Returns a list of all exercises for the current user.");
+
+        group.MapPut(ExerciseRoutes.ById, (IExerciseService exerciseService, 
+                    int id, 
+                    ExerciseModel model, 
+                    CancellationToken token) =>
+                exerciseService.UpdateExerciseAsync(id, model, token))
+            .WithName("UpdateExercise")
+            .WithSummary("Update an exercise")
+            .WithDescription("Updates an existing exercise by its ID.");
+
+        group.MapDelete(ExerciseRoutes.ById, (IExerciseService exerciseService, 
+                    int id, 
+                    CancellationToken token) =>
+                exerciseService.DeleteExerciseAsync(id, token))
+            .WithName("DeleteExercise")
+            .WithSummary("Delete an exercise")
+            .WithDescription("Deletes an existing exercise by its ID.");
+
+        return app;
+    }
+
+    public static WebApplication MapExerciseWorkoutEndpoints(this WebApplication app)
+    {
+        var group = app.MapGroup(WorkoutExerciseRoutes.Base)
+            .WithTags("WorkoutExercises")
             .RequireAuthorization();
 
-        app.MapPut(WorkoutRoutes.ById, async (
-                [FromServices] IWorkoutService workoutService,
-                [FromRoute] int id,
-                [FromBody] WorkoutModel model,
-                CancellationToken token)
-            => await workoutService.UpdateWorkoutAsync(id, model, token))
-            .RequireAuthorization();
+        group.MapPost(ApiRoutes.Empty, (int workoutId, 
+                WorkoutExerciseModel model, 
+                IWorkoutExerciseService workoutExerciseService, 
+                CancellationToken token) =>
+            {
+                model.WorkoutId = workoutId;
+                return workoutExerciseService.CreateWorkoutExerciseAsync(model, token);
+            })
+            .WithName("AddExerciseToWorkout")
+            .WithSummary("Add exercise to workout")
+            .WithDescription("Adds an exercise to the specified workout with sets/reps/weight.");
 
-        app.MapDelete(WorkoutRoutes.ById, async (
-                [FromServices] IWorkoutService workoutService,
-                [FromRoute] int id,
-                CancellationToken token)
-            => await workoutService.DeleteWorkoutAsync(id, token))
-            .RequireAuthorization();
+        group.MapGet(ApiRoutes.Empty, (int workoutId, 
+                    IWorkoutExerciseService workoutExerciseService, 
+                    CancellationToken token) =>
+                workoutExerciseService.GetExercisesForWorkoutAsync(workoutId, token))
+            .WithName("ListExercisesForWorkout")
+            .WithSummary("List exercises for workout")
+            .WithDescription("Returns all exercises for the specified workout.");
 
-        app.MapGet(WorkoutRoutes.Base, async (
-                [FromServices] IWorkoutService workoutService,
-                [FromQuery] string keyword,
-                CancellationToken token) => 
-            !string.IsNullOrWhiteSpace(keyword) 
-                ? await workoutService.SearchWorkoutsByKeywordAsync(keyword, token)
-                : await workoutService.GetAllWorkoutsAsync(token))
-                .RequireAuthorization();
+        group.MapPut(WorkoutExerciseRoutes.ById, (int workoutId, 
+                int exerciseId, 
+                WorkoutExerciseModel model, 
+                IWorkoutExerciseService workoutExerciseService, 
+                CancellationToken token) =>
+            {
+                model.WorkoutId  = workoutId;
+                model.ExerciseId = exerciseId;
+                return workoutExerciseService.UpdateWorkoutExerciseAsync(model, token);
+            })
+            .WithName("UpdateWorkoutExercise")
+            .WithSummary("Update workout exercise payload")
+            .WithDescription("Updates sets/reps/weight for an exercise within a workout.");
 
-        app.MapPost(WorkoutRoutes.Sort, async (
-                [FromServices] IWorkoutService workoutService,
-                [FromBody] WorkoutSortByDateModel model,
-                CancellationToken token)
-            => await workoutService.SortWorkoutsByDateAsync(model, token))
-            .RequireAuthorization();
+        group.MapDelete(WorkoutExerciseRoutes.ById, (int workoutId, 
+                    int exerciseId, 
+                    IWorkoutExerciseService workoutExerciseService, 
+                    CancellationToken token) =>
+                workoutExerciseService.DeleteWorkoutExerciseAsync(workoutId, exerciseId, token))
+            .WithName("DeleteWorkoutExercise")
+            .WithSummary("Remove exercise from workout")
+            .WithDescription("Deletes the exercise from the specified workout.");
 
         return app;
     }

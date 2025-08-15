@@ -5,6 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using MyWebApp.Data;
 using MyWebApp.Options;
 using System.Text;
+using FluentValidation;
+using MyWebApp.DTO;
+using MyWebApp.Guards;
 using MyWebApp.Interfaces;
 using MyWebApp.Models;
 using MyWebApp.Repositories;
@@ -27,8 +30,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IExerciseRepository, ExerciseRepository>();
+        services.AddScoped<IExerciseService, ExerciseService>();
+        services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
+        services.AddScoped<IWorkoutExerciseService, WorkoutExerciseService>();
         services.AddScoped<IWorkoutRepository, WorkoutRepository>();
         services.AddScoped<IWorkoutService, WorkoutService>();
+        services.AddScoped<IValidator<WorkoutExerciseModel>, WorkoutExerciseModelValidator>();
         
 
         services.AddDbContext<ApplicationContext>(options =>

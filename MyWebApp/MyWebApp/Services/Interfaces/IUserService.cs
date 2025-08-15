@@ -8,7 +8,7 @@ public interface IUserService
 { 
     Task<UserProfileModel> GetUserProfileAsync();
     
-    Task UpdateUserProfileAsync(UserUpdateModel dto);
+    Task UpdateUserProfileAsync(UserUpdateModel model);
 
     Task DeleteUserProfileAsync();
 }

@@ -1,6 +1,6 @@
 namespace MyWebApp.Constants;
 
-public class FieldLengths
+public static class FieldLengths
 {
     public const int DefaultText = 100;
     

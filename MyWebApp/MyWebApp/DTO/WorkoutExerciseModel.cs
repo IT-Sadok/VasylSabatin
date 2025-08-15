@@ -1,13 +1,12 @@
-namespace MyWebApp.Models;
+namespace MyWebApp.DTO;
 
-public class WorkoutExercise
+public class WorkoutExerciseModel
 {
-    public int Id { get; set; }
     public int WorkoutId { get; set; }
-    public Workout Workout { get; set; }
     
     public int ExerciseId { get; set; }
-    public Exercise Exercise { get; set; }
+    
+    public string ExerciseName { get; set; }
     
     public int Sets { get; set; }
     

@@ -1,44 +1,40 @@
 using Microsoft.OpenApi.Models;
-
-namespace MyWebApp.Extensions;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 public static class SwaggerExtension
 {
     public static IServiceCollection AddSwaggerwithJwt(this IServiceCollection services)
     {
+        services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "JWTToken_Auth_API",
-                Version = "v1"
-            });
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyWebApp API", Version = "v1" });
+            c.CustomSchemaIds(t => t.FullName);
+
+            var bearer = new OpenApiSecurityScheme
             {
                 Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description =
-                    "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
-            });
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] { }
-                }
-            });
+                Description = "Bearer {token}"
+            };
+            c.AddSecurityDefinition("Bearer", bearer);
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement { { bearer, Array.Empty<string>() } });
         });
-        
+
         return services;
+    }
+
+    public static IApplicationBuilder UsePrettySwagger(this IApplicationBuilder app)
+    {
+        return app.UseSwaggerUI(o =>
+        {
+            o.DisplayRequestDuration();
+            o.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+            o.DefaultModelsExpandDepth(-1);
+            o.DisplayOperationId();
+        });
     }
 }
