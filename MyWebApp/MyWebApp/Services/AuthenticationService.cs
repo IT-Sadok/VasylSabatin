@@ -54,7 +54,7 @@ public class AuthenticationService : IAuthenticationService
         {
             throw new SignInFailedException("User not found. Try again.");
         }
-        var isPasswordValid = await _userManager.CheckPasswordAsync(user!, model.Password);
+        var isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
         
         if (!isPasswordValid)
         {
