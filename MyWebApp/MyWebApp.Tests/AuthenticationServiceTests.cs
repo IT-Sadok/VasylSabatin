@@ -8,13 +8,6 @@ using NSubstitute;
 
 public class AuthenticationServiceTests
 {
-    private static UserManager<User> CreateUserManagerSubstitute()
-    {
-        var store = Substitute.For<IUserStore<User>>();
-        return Substitute.For<UserManager<User>>(
-            store, null, null, null, null, null, null, null, null);
-    }
-
     [Fact]
     public async Task RegisterUserAsync_WhenSuccess_ReturnsAuthModelWithToken()
     {
@@ -182,5 +175,12 @@ public class AuthenticationServiceTests
         await userManager.Received(1).FindByNameAsync(model.Email);
         await userManager.Received(1).CheckPasswordAsync(user, model.Password);
         jwtService.DidNotReceive().GenerateJwtToken(Arg.Any<string>(), Arg.Any<int>());
+    }
+    
+    private static UserManager<User> CreateUserManagerSubstitute()
+    {
+        var store = Substitute.For<IUserStore<User>>();
+        return Substitute.For<UserManager<User>>(
+            store, null, null, null, null, null, null, null, null);
     }
 } 
