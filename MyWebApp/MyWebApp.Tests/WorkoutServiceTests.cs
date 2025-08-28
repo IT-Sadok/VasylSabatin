@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using MyWebApp.Constants;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
@@ -7,13 +5,16 @@ using MyWebApp.Models;
 using MyWebApp.Repositories.Interfaces;
 using MyWebApp.Services;
 using MyWebApp.Services.Interfaces;
-using Npgsql.Replication.PgOutput.Messages;
 using NSubstitute;
 
 namespace MyWebApp.Tests;
 
 public class WorkoutServiceTests
 {
+    private const int WorkoutId1 = 1;
+    private const int WorkoutId2 = 2;
+    private const int NonExistingWorkoutId = 999;
+    
     [Fact]
     public async Task CreateWorkoutAsync_WhenSuccess_ReturnsWorkoutModel()
     {
@@ -21,7 +22,7 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
 
         var model = new WorkoutModel
         {
@@ -54,21 +55,21 @@ public class WorkoutServiceTests
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
         
-        var token = CancellationToken.None;
+        CancellationToken token = default;
         var userId = TestConstants.TestUserId;
 
         var entities = new List<Workout>
         {
             new ()
             {
-                Id = TestConstants.WorkoutId1, UserId = userId,
+                Id = WorkoutId1, UserId = userId,
                 Title = "Leg Day",
                 DateOfTraining = new DateTime(2025, 8, 28),
                 DurationMinutes = TimeSpan.FromMinutes(90),
                 Notes = "Some notes"
             },
             new() {
-                Id = TestConstants.WorkoutId2, UserId = userId,
+                Id = WorkoutId2, UserId = userId,
                 Title = "Push Day",
                 DateOfTraining = new DateTime(2025, 8, 29),
                 DurationMinutes = TimeSpan.FromMinutes(60),
@@ -106,11 +107,11 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
         
         var existingWorkout = new Workout
         {
-            Id = TestConstants.WorkoutId1,
+            Id = WorkoutId1,
             UserId = TestConstants.TestUserId,
             Title = "Old title",
             DateOfTraining = new DateTime(2025, 8, 28),
@@ -118,7 +119,7 @@ public class WorkoutServiceTests
             Notes = "Old notes"
         };
 
-        repo.GetWorkoutByIdAsync(TestConstants.WorkoutId1, TestConstants.TestUserId, token)
+        repo.GetWorkoutByIdAsync(WorkoutId1, TestConstants.TestUserId, token)
             .Returns(existingWorkout);
         
         var updateModel = new WorkoutModel
@@ -130,7 +131,7 @@ public class WorkoutServiceTests
         };
         
         //Act
-        await service.UpdateWorkoutAsync(TestConstants.WorkoutId1, updateModel, token);
+        await service.UpdateWorkoutAsync(WorkoutId1, updateModel, token);
         
         //Assert
         await repo.Received(1).UpdateWorkoutAsync(
@@ -152,9 +153,9 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
         
-        repo.GetWorkoutByIdAsync(TestConstants.NonExistingWorkoutId, TestConstants.TestUserId, token)
+        repo.GetWorkoutByIdAsync(NonExistingWorkoutId, TestConstants.TestUserId, token)
             .Returns((Workout?)null);
 
         var model = new WorkoutModel
@@ -167,9 +168,9 @@ public class WorkoutServiceTests
         
         //Act && Assert
         await Assert.ThrowsAsync<WorkoutNotFoundException>(() => 
-            service.UpdateWorkoutAsync(TestConstants.NonExistingWorkoutId, model, token));
+            service.UpdateWorkoutAsync(NonExistingWorkoutId, model, token));
 
-        await repo.Received(1).GetWorkoutByIdAsync(TestConstants.NonExistingWorkoutId, TestConstants.TestUserId, token);
+        await repo.Received(1).GetWorkoutByIdAsync(NonExistingWorkoutId, TestConstants.TestUserId, token);
         await repo.DidNotReceive().UpdateWorkoutAsync(Arg.Any<Workout>(), token);
         await repo.DidNotReceive().SaveChangesAsync(token);
     }
@@ -181,12 +182,12 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
         
-        repo.GetWorkoutByIdAsync(TestConstants.WorkoutId1, TestConstants.TestUserId, token)
+        repo.GetWorkoutByIdAsync(WorkoutId1, TestConstants.TestUserId, token)
             .Returns(new Workout
             {
-                Id = TestConstants.WorkoutId1,
+                Id = WorkoutId1,
                 UserId = TestConstants.TestUserId,
                 Title = "Test title",
                 DateOfTraining = new DateTime(2025, 8, 28),
@@ -195,11 +196,11 @@ public class WorkoutServiceTests
             });
         
         //Act
-        await service.DeleteWorkoutAsync(TestConstants.WorkoutId1, token);
+        await service.DeleteWorkoutAsync(WorkoutId1, token);
         
         //Assert
-        await repo.Received(1).GetWorkoutByIdAsync(TestConstants.WorkoutId1, TestConstants.TestUserId, token);
-        await repo.Received(1).DeleteWorkoutAsync(TestConstants.WorkoutId1, TestConstants.TestUserId, token);
+        await repo.Received(1).GetWorkoutByIdAsync(WorkoutId1, TestConstants.TestUserId, token);
+        await repo.Received(1).DeleteWorkoutAsync(WorkoutId1, TestConstants.TestUserId, token);
         await repo.Received(1).SaveChangesAsync(token);
     }
     
@@ -210,16 +211,16 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
 
-        repo.GetWorkoutByIdAsync(TestConstants.NonExistingWorkoutId, TestConstants.TestUserId, token)
+        repo.GetWorkoutByIdAsync(NonExistingWorkoutId, TestConstants.TestUserId, token)
             .Returns((Workout?)null);
         
         //Act && Assert
         await Assert.ThrowsAsync<WorkoutNotFoundException>(() => 
-            service.DeleteWorkoutAsync(TestConstants.NonExistingWorkoutId, token));
+            service.DeleteWorkoutAsync(NonExistingWorkoutId, token));
         
-        await repo.Received(1).GetWorkoutByIdAsync(TestConstants.NonExistingWorkoutId, TestConstants.TestUserId, token);
+        await repo.Received(1).GetWorkoutByIdAsync(NonExistingWorkoutId, TestConstants.TestUserId, token);
         await repo.DidNotReceive().DeleteWorkoutAsync(Arg.Any<int>(), Arg.Any<int>(), token);
         await repo.DidNotReceive().SaveChangesAsync(token);
     }
@@ -231,13 +232,13 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
 
         var entities = new[]
         {
             new Workout 
             { 
-                Id = TestConstants.WorkoutId1, 
+                Id = WorkoutId1, 
                 UserId = TestConstants.TestUserId, 
                 Title = "Chest day", 
                 DateOfTraining = new DateTime(2025,8,1), 
@@ -246,7 +247,7 @@ public class WorkoutServiceTests
             
             new Workout
             {
-                Id = TestConstants.WorkoutId2, 
+                Id = WorkoutId2, 
                 UserId = TestConstants.TestUserId, 
                 Title = "Legs day", 
                 DateOfTraining = new DateTime(2025,6,2), 
@@ -279,7 +280,7 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
 
         var entities = new[]
         {
@@ -307,7 +308,7 @@ public class WorkoutServiceTests
         var userContext = CreateUserContextSubstitute(TestConstants.TestUserId);
         var repo = CreateWorkoutRepositorySubstitute();
         var service = new WorkoutService(userContext, repo);
-        var token = CancellationToken.None;
+        CancellationToken token = default;
 
         var entities = new[]
         {
