@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using MyWebApp.Constants;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Models;
@@ -14,11 +15,11 @@ public class UserServiceTests
     {
         // Arrange
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 1);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
 
         var user = new User
         {
-            Id = 1,
+            Id = TestConstants.TestUserId,
             Email = "test@example.com",
             UserName = "test@example.com",
             FullName = "Tester",
@@ -26,7 +27,7 @@ public class UserServiceTests
             Weight = 78
         };
 
-        userManager.FindByIdAsync("1").Returns(user);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns(user);
         
         var service = new UserService(userManager,  userContext);
         
@@ -40,22 +41,22 @@ public class UserServiceTests
         Assert.Equal(user.Age, result.Age);
         Assert.Equal(user.Weight, result.Weight);
         
-        await userManager.Received(1).FindByIdAsync("1");
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
     }
 
     [Fact]
     public async Task GetUserProfileAsync_WhenFailure_ThrowsUserNotFoundException()
     {
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 12);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
         
-        userManager.FindByIdAsync("12").Returns((User)null);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns((User)null);
         
         var service = new UserService(userManager,  userContext);
         
         // Act & Assert
         await Assert.ThrowsAsync<UserNotFoundException>(()  => service.GetUserProfileAsync());
-        await userManager.Received(1).FindByIdAsync("12");
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
     }
 
     [Fact]
@@ -63,11 +64,11 @@ public class UserServiceTests
     {
         //Arrange
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 1);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
 
         var user = new User
         {
-            Id = 1,
+            Id = TestConstants.TestUserId,
             FullName = "Old Name",
             Age = 18,
             Weight = 70,
@@ -82,7 +83,7 @@ public class UserServiceTests
             Weight = 80
         };
         
-        userManager.FindByIdAsync("1").Returns(user);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns(user);
         userManager.UpdateAsync(Arg.Any<User>()).Returns(IdentityResult.Success);
 
         var service = new UserService(userManager, userContext);
@@ -91,9 +92,9 @@ public class UserServiceTests
         await service.UpdateUserProfileAsync(model);
         
         //Assert
-        await userManager.Received(1).FindByIdAsync("1");
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
         await userManager.Received(1).UpdateAsync(Arg.Is<User>(u =>
-            u.Id == 1 &&
+            u.Id == TestConstants.TestUserId &&
             u.FullName == model.FullName &&
             u.Age == model.Age &&
             u.Weight == model.Weight));
@@ -104,15 +105,15 @@ public class UserServiceTests
     {
         //Arrange
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 1);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
         
-        userManager.FindByIdAsync("1").Returns((User)null);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns((User)null);
         
         var service = new UserService(userManager, userContext);
         
         //Act & Assert
         await Assert.ThrowsAsync<UserNotFoundException>(()  => service.UpdateUserProfileAsync(new UserUpdateModel()));
-        await userManager.Received(1).FindByIdAsync("1");
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
         await userManager.DidNotReceive().UpdateAsync(Arg.Any<User>());
     }
 
@@ -121,17 +122,17 @@ public class UserServiceTests
     {
         //Arrange
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 1);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
 
-        var user = new User { Id = 1, FullName = "Old Name" };
+        var user = new User { Id = TestConstants.TestUserId, FullName = "Old Name" };
         var model = new UserUpdateModel {FullName = "New Name"};
 
-        userManager.FindByIdAsync("1").Returns(user);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns(user);
         
         var errors = new []
             {
-                new IdentityError { Code = "DuplicateEmail", Description = "Email is already taken. Please try another one." },
-                new IdentityError { Code = "DuplicateUserName", Description = "Username is already taken. Please try another one." }
+                new IdentityError { Code = "DuplicateEmail", Description = ErrorMessages.DuplicateEmail},
+                new IdentityError { Code = "DuplicateUserName", Description = ErrorMessages.DuplicateUserName}
             };
         
         userManager.UpdateAsync(Arg.Any<User>())
@@ -141,12 +142,12 @@ public class UserServiceTests
         
         // Act & Assert
         var exception = await Assert.ThrowsAsync<UserUpdateFailedException>(() => service.UpdateUserProfileAsync(model));
-        Assert.Contains("DuplicateEmail: Email is already taken. Please try another one.", exception.Message);
-        Assert.Contains("DuplicateUserName: Username is already taken. Please try another one.", exception.Message);
+        Assert.Contains(ErrorMessages.DuplicateEmail, exception.Message);
+        Assert.Contains(ErrorMessages.DuplicateUserName, exception.Message);
         
-        await userManager.Received(1).FindByIdAsync("1");
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
         await userManager.Received(1).UpdateAsync(Arg.Is<User>(u =>
-            u.Id == 1 &&
+            u.Id == TestConstants.TestUserId &&
             u.FullName == model.FullName));
     }
     
@@ -155,11 +156,11 @@ public class UserServiceTests
     {
         //Arrange
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 1);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
 
-        var user = new User { Id = 1, Email = "test@example.com", UserName = "Test" };
+        var user = new User { Id = TestConstants.TestUserId, Email = "test@example.com", UserName = "Test" };
         
-        userManager.FindByIdAsync("1").Returns(user);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns(user);
         userManager.DeleteAsync(Arg.Any<User>()).Returns(IdentityResult.Success);
         
         var service = new UserService(userManager, userContext);
@@ -168,8 +169,8 @@ public class UserServiceTests
         await service.DeleteUserProfileAsync();
         
         //Assert
-        await userManager.Received(1).FindByIdAsync("1");
-        await userManager.Received(1).DeleteAsync(Arg.Is<User>(u => u.Id == 1));
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
+        await userManager.Received(1).DeleteAsync(Arg.Is<User>(u => u.Id == TestConstants.TestUserId));
     }
     
     [Fact]
@@ -177,15 +178,15 @@ public class UserServiceTests
     {
         //Arrange
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 1);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
         
-        userManager.FindByIdAsync("1").Returns((User)null);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns((User)null);
         
         var service = new UserService(userManager, userContext);
         
         //Act & Assert
         await Assert.ThrowsAsync<UserNotFoundException>(()  => service.DeleteUserProfileAsync());
-        await userManager.Received(1).FindByIdAsync("1");
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
         await userManager.DidNotReceive().DeleteAsync(Arg.Any<User>());
     }
     
@@ -194,15 +195,15 @@ public class UserServiceTests
     {
         //Arrange
         var userManager = CreateUserManagerSubstitute();
-        var userContext = CreateUserContextSubstitute(userId: 1);
+        var userContext = CreateUserContextSubstitute(userId: TestConstants.TestUserId);
 
-        var user = new User { Id = 1 };
+        var user = new User { Id = TestConstants.TestUserId };
         
-        userManager.FindByIdAsync("1").Returns(user);
+        userManager.FindByIdAsync(TestConstants.TestUserIdString).Returns(user);
         
         var errors = new []
             {
-                new IdentityError { Code = "DataBaseError", Description = "Could not delete user. Try again later." },
+                new IdentityError { Code = "DataBaseError", Description = ErrorMessages.DeleteDbError},
             };
         
         userManager.DeleteAsync(Arg.Any<User>())
@@ -212,10 +213,11 @@ public class UserServiceTests
         
         //Act && Assert
         var exception = await Assert.ThrowsAsync<UserDeleteFailedException>(() => service.DeleteUserProfileAsync());
-        Assert.Contains("DataBaseError: Could not delete user. Try again later.", exception.Message);
+        Assert.Contains(ErrorMessages.DeleteDbError, exception.Message);
         
-        await userManager.Received(1).FindByIdAsync("1");
-        await userManager.Received(1).DeleteAsync(user);
+        await userManager.Received(1).FindByIdAsync(TestConstants.TestUserIdString);
+        await userManager.Received(1)
+            .DeleteAsync(Arg.Is<User>(u => u.Id == TestConstants.TestUserId));
     }
 
     private static UserManager<User> CreateUserManagerSubstitute()
