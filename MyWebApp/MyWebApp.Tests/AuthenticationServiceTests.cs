@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using MyWebApp;
+using MyWebApp.Constants;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Interfaces;
 using MyWebApp.Models;
 using NSubstitute;
+using Xunit.Sdk;
 
 public class AuthenticationServiceTests
 {
@@ -60,7 +62,7 @@ public class AuthenticationServiceTests
 
         var identityErrors = new List<IdentityError>
         {
-            new IdentityError { Code = "DublicateEmail", Description = "Email is already taken. Please try another one." }
+            new IdentityError { Code = "DublicateEmail", Description = ErrorMessages.DuplicateEmail }
         };
 
         userManager.CreateAsync(Arg.Any<User>(), Arg.Any<string>())
@@ -79,7 +81,7 @@ public class AuthenticationServiceTests
         
         // Act & Assert
         var exception = await Assert.ThrowsAsync<SignUpFailedException>(() => service.RegisterUserAsync(model));
-        Assert.Contains("DublicateEmail: Email is already taken. Please try another one.", exception.Message);
+        Assert.Contains(ErrorMessages.DuplicateEmail, exception.Message);
         
         jwtService.DidNotReceive()
             .GenerateJwtToken(Arg.Any<string>(), Arg.Any<int>());
