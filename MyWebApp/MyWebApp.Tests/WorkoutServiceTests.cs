@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using MyWebApp.Constants;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;

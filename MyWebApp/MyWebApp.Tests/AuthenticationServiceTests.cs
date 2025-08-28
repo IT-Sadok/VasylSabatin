@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Identity;
-using MyWebApp;
 using MyWebApp.Constants;
 using MyWebApp.DTO;
 using MyWebApp.DTO.Exceptions;
 using MyWebApp.Interfaces;
 using MyWebApp.Models;
 using NSubstitute;
-using Xunit.Sdk;
+
+namespace MyWebApp.Tests;
 
 public class AuthenticationServiceTests
 {
@@ -43,12 +43,12 @@ public class AuthenticationServiceTests
         
         await userManager.Received(1)
             .CreateAsync(Arg.Is<User>(u => 
-                u.FullName == model.FullName &&
-                u.Age == model.Age &&
-                u.Email == model.Email &&
-                u.Weight == model.Weight &&
-                u.UserName == model.Email),
-            model.Password);
+                    u.FullName == model.FullName &&
+                    u.Age == model.Age &&
+                    u.Email == model.Email &&
+                    u.Weight == model.Weight &&
+                    u.UserName == model.Email),
+                model.Password);
         
         jwtService.Received(1).GenerateJwtToken(model.Email, Arg.Any<int>());
     }
@@ -185,4 +185,4 @@ public class AuthenticationServiceTests
         return Substitute.For<UserManager<User>>(
             store, null, null, null, null, null, null, null, null);
     }
-} 
+}
